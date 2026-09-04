@@ -39,6 +39,7 @@ Supabase PostgreSQL (Single Source of Truth)
 - **Frontend Design System Guidelines:** Created `docs/frontend-uiux.md` outlining typography, colors, layout, and UI state conventions.
 - **Project Structure Analysis:** Audited seed data and schemas.
 - **Task 9 — Frontend Foundation:** Initialized Next.js 16 (App Router, TypeScript, Tailwind CSS v4) at the repository root with shadcn/ui (radix-nova style). Implemented design tokens from `docs/frontend-uiux.md` in `src/app/globals.css` (brand, surface, status, AI, and domain colors with light/dark values), Inter typography, responsive app shell (`src/components/layout/`: sticky desktop sidebar ≥lg, mobile header + sheet drawer <lg), all 7 routes (`/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai` — `/` redirects to `/dashboard`), shared `PageHeader`/`EmptyState`/`ErrorState` components, `error.tsx` + `not-found.tsx` boundaries, and shadcn/ui primitives (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label). Pages show honest empty states — no fake data, no backend logic, no AI logic.
+- **Task 10 — Dashboard:** Built the CampusOS dashboard at `/dashboard`. Added domain types (`src/lib/types.ts`, mirrors `schema/schema.md`), date/time helpers (`src/lib/datetime.ts`, Sunday–Thursday week aware), dashboard selectors (`src/lib/dashboard-selectors.ts`: today's classes, next class, active announcements, upcoming events, upcoming deadlines, room-availability with the AGENTS.md overlap rule, summary stats), and a backend-ready data service (`src/lib/data/dashboard.ts`) that fetches `GET /api/dashboard`. Widgets in `src/components/dashboard/`: stat cards, Today's Schedule (highlights next class), Assignment Deadlines (proximity badges), Announcements (priority-sorted), Upcoming Events, Rooms Available Now. All wired through a client component (`dashboard-content.tsx`) handling four states — loading (skeletons), ready (populated), empty (backend not connected → 404), error (retryable). No runtime JSON/seed data or fake permanent data; Supabase remains the single source of truth. Verified populated + empty + error states across desktop/tablet/mobile using a throwaway local API route (since deleted).
 
 ### In Progress
 - N/A
@@ -72,7 +73,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 7: AI Action Tools | AI | T2 | NOT STARTED |
 | Task 8: AI Reasoning & Safety | AI | T2 | NOT STARTED |
 | Task 9: Frontend Foundation | Frontend| T3 | COMPLETED |
-| Task 10: Dashboard | Frontend| T3 | NOT STARTED |
+| Task 10: Dashboard | Frontend| T3 | COMPLETED |
 | Task 11: Schedule UI | Frontend| T3 | NOT STARTED |
 | Task 12: Rooms UI | Frontend| T3 | NOT STARTED |
 | Task 13: Events UI | Frontend| T3 | NOT STARTED |
@@ -100,7 +101,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Seed Location:** `data/` (JSON files to be imported)
 
 ## 8. API / Service Contract
-*Pending Implementation (Tasks 2-4)*
+*Backend endpoints pending (Tasks 2-4). The frontend data layer already expects `GET /api/dashboard` returning `{ schedules, rooms, events, announcements, assignments }` (see `src/lib/data/dashboard.ts`); until it exists a 404 surfaces as an empty state.*
 
 ## 9. AI Tool Contract
 | Tool | Owner | Status | Backend Dependency |
@@ -121,7 +122,8 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Shell:** `src/components/layout/` — `AppShell`, `AppSidebar` (desktop ≥lg), `AppHeader` + sheet drawer (mobile), `SidebarNav` with active-route highlighting.
 - **Shared components:** `src/components/` — `PageHeader`, `EmptyState`, `ErrorState`; shadcn/ui primitives in `src/components/ui/` (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label).
 - **Design tokens:** `src/app/globals.css` per `docs/frontend-uiux.md` (light + dark values; Tailwind utilities like `text-ai-accent`, `bg-danger/10`, `text-schedule` available).
-- **Pending:** Tasks 10–16 (dashboard widgets with real data, per-system CRUD UIs, AI chat interface).
+- **Dashboard (Task 10):** `/dashboard` renders live widgets (stat cards, Today's Schedule, Assignment Deadlines, Announcements, Upcoming Events, Rooms Available Now) with loading/empty/error states. Data layer: `src/lib/types.ts`, `src/lib/datetime.ts`, `src/lib/dashboard-selectors.ts`, `src/lib/data/dashboard.ts`. Widgets in `src/components/dashboard/`. Shared `src/components/status-badges.tsx`.
+- **Pending:** Tasks 11–16 (per-system CRUD UIs, AI chat interface) and Task 17 (wire the dashboard/pages to the real backend API).
 
 ## 11. Git / Collaboration Rules
 - `git pull origin main` before starting work.
