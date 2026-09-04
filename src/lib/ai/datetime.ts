@@ -1,0 +1,70 @@
+import type { CampusNow } from "@/types/ai";
+
+const WEEKDAYS: CampusNow["weekday"][] = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+export const DEFAULT_TIMEZONE = "Asia/Dhaka";
+
+function pad(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function partsInZone(date: Date, timeZone: string) {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "long",
+  });
+  const map: Record<string, string> = {};
+  for (const p of fmt.formatToParts(date)) map[p.type] = p.value;
+  return {
+    year: Number(map.year),
+    month: Number(map.month),
+    day: Number(map.day),
+    hour: Number(map.hour),
+    minute: Number(map.minute),
+    weekday: map.weekday as CampusNow["weekday"],
+  };
+}
+
+function shiftDate(year: number, month: number, day: number, deltaDays: number): string {
+  const d = new Date(Date.UTC(year, month - 1, day + deltaDays));
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+}
+
+/**
+ * Current campus date/time resolved in the campus timezone.
+ * The agent must never hardcode "today"; this is injected per request.
+ */
+export function getCampusNow(
+  timeZone: string = process.env.CAMPUS_TIMEZONE || DEFAULT_TIMEZONE,
+  at: Date = new Date(),
+): CampusNow {
+  const p = partsInZone(at, timeZone);
+  const weekdayIndex = WEEKDAYS.indexOf(p.weekday);
+  // University week runs Sunday–Thursday; Fri/Sat map to the week just ended.
+  const weekStart = shiftDate(p.year, p.month, p.day, -weekdayIndex);
+  const weekEnd = shiftDate(p.year, p.month, p.day, 4 - weekdayIndex);
+
+  return {
+    date: `${p.year}-${pad(p.month)}-${pad(p.day)}`,
+    time: `${pad(p.hour)}:${pad(p.minute)}`,
+    weekday: p.weekday,
+    timezone: timeZone,
+    timestamp: at.toISOString(),
+    weekStart,
+    weekEnd,
+  };
+}

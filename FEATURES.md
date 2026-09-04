@@ -83,6 +83,7 @@ A booking must be rejected if an overlap exists:
 ## 9. AI Agent Features
 The AI Agent must be implemented using native tool calling, backed by real APIs.
 
+- `[x]` **Agent foundation (Task 5):** `POST /api/chat`, provider abstraction (OpenAI / Groq), native tool-calling loop, zod-validated tool registry, server-injected campus clock, safety system prompt, sanitized errors. No campus tools connected yet — the agent honestly says so instead of inventing data.
 - `[ ]` **get_schedule(day?)**: Retrieve schedules, optionally filtered by day.
 - `[ ]` **get_next_class(current_day, current_time)**: Determine the next class for a student.
 - `[ ]` **get_assignments(course?, status?, due_before?)**: Retrieve assignments with robust filtering.
@@ -100,8 +101,8 @@ The AI Agent must be implemented using native tool calling, backed by real APIs.
 - `[ ]` **Clarification:** Ask follow-up questions if a request is ambiguous (e.g., missing time or room).
 - `[ ]` **Refusal:** Politely refuse unauthorized actions or actions that fail backend validation.
 - `[ ]` **Latest Data:** Guarantee that AI responses use real-time, non-stale data.
-- `[ ]` **Date/Time Reasoning:** Safely resolve relative terms like "tomorrow".
-- `[ ]` **Action Confirmation:** Wait for the backend tool to return success before telling the user the action is complete.
+- `[~]` **Date/Time Reasoning:** Safely resolve relative terms like "tomorrow". (Foundation: live campus clock + Sun–Thu week bounds injected per request; full NL resolution tested in Task 8.)
+- `[~]` **Action Confirmation:** Wait for the backend tool to return success before telling the user the action is complete. (Loop returns tool errors to the model as failures; enforced end-to-end once action tools exist in Task 7.)
 
 ## 11. Example User Flows
 - **Next Class:** The user asks, "When is my next class?" → AI uses `get_next_class` and responds with the time and room.
@@ -139,7 +140,7 @@ Refer to `project-context.md` for the official 29-task roadmap. High-level seque
 6. Finalization & Deployment (Tasks 27-29)
 
 ## 15. Current Status
-**FRONTEND FOUNDATION COMPLETE (Task 9).** Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui are initialized with the design system, app shell, navigation, all 7 routes (placeholder empty states), and reusable UI components. Backend, AI agent, and data-driven UIs are not started.
+**FRONTEND FOUNDATION COMPLETE (Task 9). AI AGENT FOUNDATION COMPLETE (Task 5).** Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui are initialized with the design system, app shell, navigation, all 7 routes (placeholder empty states), and reusable UI components. The AI agent core (`/api/chat`, provider abstraction, native tool calling) is live-verified on Groq but has 0/9 campus tools until backend services merge. Backend (Tasks 1–4) is on Teammate 1's unmerged branch; data-driven UIs are not started.
 
 ## 16. Hackathon Demo Priorities
 During judging, prioritize:

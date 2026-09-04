@@ -197,9 +197,12 @@ The agent is evaluated against these official scenarios:
 - **Authorization:** AI tools only have access to perform actions explicitly defined in the service layer.
 
 ## 18. Current Implementation Status
-*Verified against the actual repository.*
-- **Implemented Tools:** None (0/9).
-- **Partial Tools:** None.
-- **Unimplemented Tools:** All 9 tools pending implementation (Task 6 & Task 7).
-- **Tested Tools:** None.
-- **Known Issues:** The core backend and LLM provider have not yet been initialized. Data exists only as static JSON seed files.
+*Verified against the actual repository (Task 5, 2026-09-04).*
+- **Agent core:** Implemented in `src/lib/ai/`. `runAgent()` drives LLM → native tool calls → zod validation → `execute()` → tool result → LLM until a final reply (max 6 iterations). Tool failures are returned to the model as `{ ok: false, error }`, never thrown, so the model explains them honestly.
+- **Provider:** `LLM_PROVIDER=openai|groq`, one `OpenAICompatibleProvider` class (chat-completions `tools` + `tool_choice: auto`). Live-verified on Groq `openai/gpt-oss-120b`; OpenAI path unverified (no credits on test account).
+- **System prompt:** `src/lib/ai/prompt.ts` encodes principles 1–10, the Sun–Thu week, HH:MM/YYYY-MM-DD formats, morning/afternoon/evening hints, required fields for booking/registration, and lists which campus domains are currently unavailable so the model refuses rather than invents.
+- **Clock:** `getCampusNow()` (`CAMPUS_TIMEZONE`, default `Asia/Dhaka`) is injected into the system prompt every request. Never hardcoded.
+- **API:** `POST /api/chat` — see `project-context.md` §9 for the request/response contract.
+- **Implemented campus tools:** None (0/9). Only the utility `get_current_datetime` exists to exercise the loop.
+- **Tested:** 13 vitest unit tests (mock provider) + live smoke (`npm run ai:smoke`): tool round-trip succeeds; "What classes do I have on Wednesday?" and "Book Room 7A02 tomorrow" are refused without fabrication.
+- **Known Issues:** Tasks 6–7 blocked until backend services (`src/services/*`) are merged to `main`.
