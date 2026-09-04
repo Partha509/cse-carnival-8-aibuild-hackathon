@@ -94,7 +94,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 15: Assignments UI | Frontend| T3 | NOT STARTED |
 | Task 16: AI Agent UI | Frontend| T3 | NOT STARTED |
 | Task 17: Frontend ↔ Backend Integration | Integration | ALL | NOT STARTED |
-| Task 18: AI ↔ Backend Integration | Integration | T1+T2 | NOT STARTED |
+| Task 18: AI ↔ Backend Integration | Integration | T1+T2 | COMPLETED |
 | Task 19: Full End-to-End Integration | Integration | ALL | NOT STARTED |
 | Task 20: Backend Testing | Testing | T1 | NOT STARTED |
 | Task 21: AI Testing | Testing | T2 | NOT STARTED |
@@ -189,7 +189,7 @@ See `.env.example`. All server-only.
 - `CAMPUS_TIMEZONE` — IANA zone used to resolve today/tomorrow (default `Asia/Dhaka`)
 
 ## 10b. Current Next Step
-- **T2:** All AI tasks (5–8) complete. Remaining AI work is integration (Task 18) and testing (Task 21), plus full live-data verification once Supabase env is configured.
+- **T2:** All AI tasks (5–8) complete, and Task 18 (AI↔Backend integration) verified end-to-end against live Supabase. Remaining AI work is Task 21 (AI testing).
 - **Env:** Full live-data verification of AI tools requires Supabase env vars in `.env` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) + `npm run seed`. Without them, tools return a config error which the agent relays safely.
 - **T3:** Task 12+; build Task 16 against the `/api/chat` contract in §9.
 
