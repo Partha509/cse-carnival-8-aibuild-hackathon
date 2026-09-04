@@ -1,102 +1,270 @@
-# CampusOS — AI Build Hackathon
+# CampusOS
 
 An intelligent university platform powered by an AI agent that understands and acts on real-time campus data.
 
----
+## Overview
 
-## The Challenge
+Students often struggle to track down scattered information across class schedules, room availability, campus events, administrative announcements, and assignment deadlines. 
 
-Students struggle daily with scattered campus information — class changes buried in group chats, deadlines forgotten until the last minute, no easy way to know what's happening on campus right now.
+**CampusOS** brings these five distinct systems into one unified platform. Crucially, it layers an intelligent **AI Agent** on top of the live data, allowing students to use natural-language requests to find information and perform supported campus actions (like booking a room or registering for an event) instantly.
 
-Your job: build **CampusOS** — a two-part app with a data dashboard and an AI agent that always reads live data.
+The project consists of two main components:
 
-Read the full problem statement → [`PROBLEM_STATEMENT.md`](./PROBLEM_STATEMENT.md)
+### Campus Data Manager
+A traditional, robust dashboard providing comprehensive CRUD (Create, Read, Update, Delete) management for:
+- Schedules
+- Rooms
+- Events
+- Announcements
+- Assignments
 
----
+### AI Agent
+An intelligent chat interface that allows users to:
+- Ask campus-related questions
+- Search live data seamlessly
+- Find available rooms based on specific requirements
+- Book rooms securely
+- Register for campus events
+- Cancel event registrations
 
-## Repository Structure
+## Why CampusOS?
 
+- **One Unified Campus Platform:** Eliminates the need to check five different portals.
+- **Live Database-Backed Answers:** The AI agent reads the exact same database as the dashboard. If an admin edits a room capacity, the AI knows about it immediately.
+- **Natural-Language Interaction:** Students can just talk to the platform instead of navigating complex UI filters.
+- **Real Actions via Native Tool Calling:** The AI doesn't just chat; it executes real backend mutations.
+- **Modern Responsive UI:** Designed to work flawlessly on both desktop and mobile devices.
+- **Safe Clarification/Refusal Behavior:** The AI is programmed to ask for missing information and refuse unauthorized or impossible actions (e.g., booking an occupied room).
+
+## Key Features
+
+- **Schedule Management:** Track classes, instructors, and locations.
+- **Room Management:** Directory of campus classrooms, labs, and seminar halls.
+- **Room Availability:** Real-time checking of room status.
+- **Room Booking:** Secure booking system with strict overlap prevention.
+- **Event Management:** Discover upcoming campus activities.
+- **Event Registration:** Reserve spots with capacity enforcement.
+- **Announcements:** Stay updated on priority university notices.
+- **Assignments:** Track course deadlines and grades.
+- **AI Assistant:** Context-aware chatbot integrated directly into the app.
+- **Live Data:** Instant synchronization between UI updates and AI context.
+- **CRUD:** Full data management dashboard.
+- **Responsive Dashboard:** Mobile-first, accessible design system.
+
+## AI Agent
+
+The CampusOS AI agent uses **native function/tool calling** to interact directly with the backend service layer. 
+
+It supports the following nine tools:
+1. `get_schedule`
+2. `get_next_class`
+3. `get_assignments`
+4. `get_announcements`
+5. `get_events`
+6. `check_room_availability`
+7. `book_room`
+8. `register_for_event`
+9. `cancel_registration`
+
+When a user asks the AI to perform an action (e.g., booking a room), the tool is executed securely on the backend, business validation is run, and the result is permanently persisted in Supabase before the AI reports success.
+
+## Live Data Architecture
+
+**Frontend Flow:**
+```text
+User
+→ Next.js Application
+→ Backend/Service Layer
+→ Supabase PostgreSQL
 ```
+
+**AI Agent Flow:**
+```text
+User
+→ AI Agent
+→ LLM
+→ Native Tools
+→ Backend
+→ Supabase
+→ AI Response
+```
+
+*Note: The JSON files located in the `data/` folder are seed data only. They are used for the initial database import and are NOT the runtime source of truth.*
+
+## Technology Stack
+*(Planned Architecture)*
+- **Next.js:** Full-stack React framework (App Router).
+- **TypeScript:** End-to-end type safety.
+- **Tailwind CSS & shadcn/ui:** Modern, accessible design system.
+- **Supabase PostgreSQL:** Persistent, real-time database.
+- **LLM / Native Tool Calling:** Core intelligence engine.
+
+## Data Model
+
+The application revolves around these core tables:
+- **`schedules`**: Class times, courses, and instructors.
+- **`rooms`**: Room types, capacities, and equipment.
+- **`room_bookings`**: Reservations with strict conflict prevention.
+- **`events`**: Campus activities and capacities.
+- **`event_registrations`**: Student sign-ups for events.
+- **`announcements`**: Priority university notices.
+- **`assignments`**: Course tasks, deadlines, and grades.
+
+**Official Conventions:**
+- Dates are formatted using **ISO 8601** (`YYYY-MM-DD`).
+- Time is formatted using **24-hour HH:MM**.
+- The university week runs **Sunday–Thursday**.
+
+## Example Queries
+
+The AI is built to flawlessly handle queries like:
+- *"When is my next class?"*
+- *"What classes do I have on Wednesday?"*
+- *"What assignments do I have due this week?"*
+- *"Show me all high priority announcements."*
+- *"I'm free until 2 PM — is there anything on campus I could drop into?"*
+- *"Which labs have a projector and can fit at least 30 people?"*
+- *"Book Room 7A02 tomorrow from 3 PM to 5 PM."*
+- *"Register me for the Guest Lecture on Deep Learning."*
+- *"I need a room for 5 people with a projector, tomorrow between 2 and 4."*
+- *"Just book me any room tomorrow afternoon."* (The AI will ask for clarification).
+
+## Database / Seed Data
+
+**Supabase** serves as the persistent, runtime database for the application. 
+The repository includes seed files (`data/*.json`) to help initialize the database. **These seed files should not be treated as live application state.**
+
+Seed Record Counts:
+- Schedules: 24
+- Rooms: 20
+- Events: 7
+- Announcements: 8
+- Assignments: 8
+
+## Project Structure
+
+```text
 campusos-hackathon/
-│
-├── README.md                    ← You are here
-├── PROBLEM_STATEMENT.md         ← Full problem statement + scoring
-├── SUBMISSION.md                ← How and where to submit
-│
-├── data/                        ← Seed data (load these into your backend)
-│   ├── schedules.json
-│   ├── rooms.json
-│   ├── events.json
-│   ├── announcements.json
-│   └── assignments.json
-│
-├── schema/
-│   └── schema.md                ← Field names, types, and constraints for all 5 systems
-│
-└── sample_queries/
-    └── sample_queries.md        ← Queries we will use when judging your agent
+├── data/                  # Seed JSON files
+├── docs/                  # UI/UX guides
+├── sample_queries/        # Official evaluation queries
+├── schema/                # Data schema definitions
+├── .env.example
+├── AGENTS.md
+├── FEATURES.md
+├── PROBLEM_STATEMENT.md
+├── PROGRESS.md
+├── README.md
+├── SUBMISSION.md
+├── claude.md
+├── project-context.md
+└── projectdetails.md
+```
+*(Note: Application directories like `app/`, `components/`, and `lib/` will be generated during the framework initialization phase).*
+
+## Getting Started
+
+*(To be updated once the framework is initialized)*
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd campusos-hackathon
+   ```
+2. **Install dependencies** (Pending framework initialization).
+3. **Configure environment variables:** Copy `.env.example` to `.env` and fill in the required keys.
+4. **Configure Supabase:** Run database migrations and seed scripts.
+5. **Run the development server** (Pending `package.json` scripts).
+
+## Environment Variables
+
+Ensure the following variables are configured in your `.env` file based on `.env.example`. **Never expose actual secrets in source control.**
+
+```text
+# LLM Provider (Choose one based on implementation)
+OPENAI_API_KEY=
+# ANTHROPIC_API_KEY=
+# GOOGLE_API_KEY=
+# GROQ_API_KEY=
+
+# Database Connection
+DATABASE_URL=
+PORT=3000
 ```
 
----
+## Development
 
-## How to Participate
+All frontend and backend development occurs within the unified Next.js environment. Developers must strictly follow the UI guidelines in `docs/frontend-uiux.md` and the team implementation tracker in `project-context.md`.
 
-### 1. Fork the repository
+## Testing
 
-Click **Fork** in the top-right corner of this repo's GitHub page. This creates your own copy under your GitHub account, where you'll build your solution.
+*(Test commands pending framework initialization).*
+Future implementation will include testing for:
+- Backend services & API routes
+- AI tool resolution and safety
+- Frontend rendering & E2E flows
 
-### 2. Clone your fork
+## Team
 
-```bash
-git clone https://github.com/YOUR_USERNAME/campusos-hackathon.git
-cd campusos-hackathon
-```
+- **Teammate 1 [Shehab]:** Backend + Database (Supabase, CRUD, Service logic)
+- **Teammate 2:** AI Agent (LLM, Tool calling, Safety)
+- **Teammate 3:** Frontend + UI/UX (Next.js, Tailwind, Design system)
 
-### 3. Build your solution inside your fork
+## Documentation
 
-> Your solution lives in your fork — do not open a pull request to this repo.
+For deep technical context, refer to the following project documents:
+- [`project-context.md`](./project-context.md): Team workflow and task tracker.
+- [`projectdetails.md`](./projectdetails.md): Complete system architecture.
+- [`AGENTS.md`](./AGENTS.md): Safety instructions for AI agents.
+- [`claude.md`](./claude.md): Agent workflow and Git rules.
+- [`FEATURES.md`](./FEATURES.md): Authoritative feature inventory.
+- [`PROGRESS.md`](./PROGRESS.md): Living implementation tracker.
+- [`docs/frontend-uiux.md`](./docs/frontend-uiux.md): Frontend design system.
 
-### 4. Making your fork private
+## Hackathon Requirements
 
-By default, a fork is public. If you want to keep your work hidden from other participants while you build:
+CampusOS directly addresses the AI Build Hackathon rubric:
+- **Data Management & CRUD:** A fully functional dashboard powered by a real database.
+- **AI Agent:** A conversational interface tightly integrated with campus data.
+- **Live/Latest Data:** Guarantees that AI answers rely entirely on the real-time database state, bypassing stale cache issues.
+- **Actions:** Real tool calling enables the AI to persist room bookings and event registrations.
+- **Clarification/Refusal:** Intelligent safeguards prevent unauthorized actions and ambiguous queries.
+- **UI/UX:** A polished, mobile-first, accessible frontend experience.
 
-1. Go to your fork on GitHub
-2. Open **Settings** (top of the repo page)
-3. Scroll to the **Danger Zone** at the bottom
-4. Click **Change repository visibility** → **Make private**
-5. Confirm by typing the repository name
+## Security
 
-> **You may keep your fork private during the hackathon period, but it must be switched back to public by 8:30 PM on the submission deadline.** Repositories still private after that time will not be judged. To make it public again, repeat the steps above and choose **Make public** instead.
+- Secrets (API Keys, Database URLs) must remain strictly within environment variables.
+- Server-side credentials must never leak to the client bundle.
+- Supabase Row Level Security (RLS) is utilized where applicable to restrict unauthorized data mutations.
 
-### 5. Submit
+## Current Status
 
-Submit your fork's public URL via the instructions in [`SUBMISSION.md`](./SUBMISSION.md).
+**Status: Initialization Phase**
+The project currently consists of the foundational documentation, architecture planning, and official seed data. Framework initialization (Next.js), database migrations (Supabase), and AI integration are scheduled as the immediate next steps in the roadmap.
 
----
+## Roadmap
 
-## Quick Links
+The development process is governed by a 29-task roadmap detailed in `project-context.md`.
+**High-Level Phases:**
+1. Backend & Database Foundation
+2. AI Agent Implementation
+3. Frontend UI/UX Construction
+4. Integration (E2E Synchronization)
+5. Quality Assurance & Testing
+6. Delivery & Deployment
 
-| Resource | Link |
-|----------|------|
-| Full problem statement | [`PROBLEM_STATEMENT.md`](./PROBLEM_STATEMENT.md) |
-| Data schema | [`schema/schema.md`](./schema/schema.md) |
-| Sample agent queries | [`sample_queries/sample_queries.md`](./sample_queries/sample_queries.md) |
-| Submission guide | [`SUBMISSION.md`](./SUBMISSION.md) |
+## Demo / Evaluation Flow
 
----
+For hackathon judges, the following demonstration flow is recommended once deployed:
+1. Open the dashboard and observe the populated seed data.
+2. Edit a campus record (e.g., change a room's capacity or update an announcement).
+3. Open the AI Assistant and immediately ask about the data you just changed to verify real-time sync.
+4. Ask the AI to perform complex queries (e.g., "What classes do I have on Wednesday?").
+5. Ask the AI to check room availability for a specific time and equipment need.
+6. Ask the AI to **book the room**.
+7. Ask the AI to **register you for an event**.
+8. Ask a vague question ("Book a room tomorrow") to verify the AI asks for clarification instead of guessing.
+9. Check the dashboard to verify that the AI's booking and registration actions successfully persisted in the backend.
 
-## Seed Data Overview
+## License
 
-| File | Records | What It Contains |
-|------|---------|-----------------|
-| `schedules.json` | 24 | Class timetable — course, day, time, room, instructor |
-| `rooms.json` | 20 | Rooms 7A01–7A07, 7B01–7B08, 7C01–7C05 with equipment and bookings |
-| `events.json` | 7 | Campus events with registration lists |
-| `announcements.json` | 8 | Notices with priority levels and expiry dates |
-| `assignments.json` | 8 | Course assignments with deadlines and submission status |
-
-> **Important:** These JSON files are only the starting/seed data — not the database itself. Load them into a real backend (a database, or at minimum a backend service with persistent storage) on app startup. Your dashboard and AI agent must both read from and write to that backend, not the static JSON files directly. If you add, edit, or delete a record, the change must be saved in your backend and still be there after a reload — the JSON files in this repo will not update. The agent is also expected to always query the current backend state, not a cached or hardcoded copy of the seed data.
-
----
-
-Good luck. Build something that actually works.
+*(No license currently specified for this hackathon submission).*
