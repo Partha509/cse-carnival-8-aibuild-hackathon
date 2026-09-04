@@ -46,10 +46,10 @@ The repository holds the official problem statement, seed data schemas, architec
   - Objective: Configure LLM and basic agent architecture.
   - Dependencies: Task 9 scaffold (done). Backend contracts only needed from Task 6 onward.
   - Completion: Agent receives messages, calls tools natively, and replies via `/api/chat`. Verified live on Groq.
-- `[ ]` **6. AI read tools** (T2)
+- `[x]` **6. AI read tools** (T2)
   - Objective: Implement the 6 read/query tools.
-  - Dependencies: T5
-  - Completion: Agent successfully fetches live data.
+  - Dependencies: T5, backend services (T1–T4, now on main).
+  - Completion: `get_schedule`, `get_next_class`, `get_assignments`, `get_announcements`, `get_events`, `check_room_availability` implemented as native tools that call the service layer; 14 unit tests; live agent smoke confirms correct tool selection + param extraction. Full live-data return pending Supabase env config.
 - `[ ]` **7. AI action tools** (T2)
   - Objective: Implement the 3 action tools (book/register/cancel).
   - Dependencies: T6
@@ -166,8 +166,8 @@ The repository holds the official problem statement, seed data schemas, architec
 
 ### Teammate 2 — AI Agent
 - `[x]` LLM integration
-- `[x]` Native tool calling (loop + registry; 0/9 campus tools yet)
-- `[ ]` Read tools
+- `[x]` Native tool calling (loop + registry)
+- `[x]` Read tools (6/6 — Task 6)
 - `[ ]` Action tools
 - `[ ]` Reasoning
 - `[ ]` Safety logic
@@ -206,12 +206,13 @@ The repository holds the official problem statement, seed data schemas, architec
 - Tasks 6–7 blocked until Teammate 1's services are on `main`.
 
 ## 9. Recent Changes
+- [2026-09-04] Task 6: AI read tools — `src/lib/ai/tools/{get-schedule,get-next-class,get-assignments,get-announcements,get-events,check-room-availability,service}.ts`, registered in the default registry; `read-tools.test.ts` (14 tests). Each wraps the backend service layer.
 - [2026-09-04] Task 5: AI agent foundation — `src/lib/ai/**`, `src/app/api/chat/route.ts`, `src/types/ai.ts`, `scripts/ai-smoke.ts`, `vitest.config.ts`; `.env.example` gained `LLM_PROVIDER`/`GROQ_*`/`OPENAI_MODEL`/`CAMPUS_TIMEZONE`; `npm test` and `npm run ai:smoke` scripts.
 - [2026-09-04] Created initial repository documentation suite (`AGENTS.md`, `claude.md`, `FEATURES.md`, `PROGRESS.md`, `projectdetails.md`, `project-context.md`, `docs/frontend-uiux.md`).
 
 ## 10. Testing Status
 - `[ ]` Backend tests
-- `[~]` AI tests (13 unit tests for agent loop/datetime pass; tool tests pending Tasks 6–7)
+- `[~]` AI tests (27 unit tests: agent loop, datetime, 6 read tools; action-tool + full live-data tests pending Tasks 7–8 and Supabase config)
 - `[ ]` Frontend tests
 - `[ ]` Integration tests
 - `[ ]` E2E

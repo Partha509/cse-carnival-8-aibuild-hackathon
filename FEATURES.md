@@ -94,12 +94,12 @@ A booking must be rejected if an overlap exists:
 The AI Agent must be implemented using native tool calling, backed by real APIs.
 
 - `[x]` **Agent foundation (Task 5):** `POST /api/chat`, provider abstraction (OpenAI / Groq), native tool-calling loop, zod-validated tool registry, server-injected campus clock, safety system prompt, sanitized errors. No campus tools connected yet — the agent honestly says so instead of inventing data.
-- `[ ]` **get_schedule(day?)**: Retrieve schedules, optionally filtered by day.
-- `[ ]` **get_next_class(current_day, current_time)**: Determine the next class for a student.
-- `[ ]` **get_assignments(course?, status?, due_before?)**: Retrieve assignments with robust filtering.
-- `[ ]` **get_announcements(priority?, active_only?)**: Read campus notices.
-- `[ ]` **get_events(date?, upcoming_only?)**: Check campus events.
-- `[ ]` **check_room_availability(date, start_time, end_time, min_capacity?, required_equipment?)**: Verify a room is free and meets requirements.
+- `[x]` **get_schedule(day?)**: Retrieve schedules, optionally filtered by day.
+- `[x]` **get_next_class(current_day, current_time)**: Determine the next class for a student.
+- `[x]` **get_assignments(course?, status?, due_before?)**: Retrieve assignments with robust filtering.
+- `[x]` **get_announcements(priority?, active_only?)**: Read campus notices.
+- `[x]` **get_events(date?, upcoming_only?)**: Check campus events.
+- `[x]` **check_room_availability(date, start_time, end_time, min_capacity?, required_equipment?)**: Verify a room is free and meets requirements.
 - `[ ]` **book_room(room_number, date, start_time, end_time, purpose, booked_by)**: Execute a booking.
 - `[ ]` **register_for_event(event_name_or_id, student_name, student_id)**: Execute an event registration.
 - `[ ]` **cancel_registration(event_name_or_id, student_id)**: Cancel an existing registration.

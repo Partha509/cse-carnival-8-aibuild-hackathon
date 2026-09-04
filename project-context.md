@@ -44,6 +44,7 @@ Supabase PostgreSQL (Single Source of Truth)
 - **Event Registration Service:** Full registration lifecycle with capacity enforcement, duplicate prevention, and automatic `registered` count + `status` synchronization.
 - **Task 9 — Frontend Foundation:** Initialized Next.js 16 (App Router, TypeScript, Tailwind CSS v4) at the repository root with shadcn/ui (radix-nova style). Implemented design tokens from `docs/frontend-uiux.md` in `src/app/globals.css` (brand, surface, status, AI, and domain colors with light/dark values), Inter typography, responsive app shell (`src/components/layout/`: sticky desktop sidebar ≥lg, mobile header + sheet drawer <lg), all 7 routes (`/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai` — `/` redirects to `/dashboard`), shared `PageHeader`/`EmptyState`/`ErrorState` components, `error.tsx` + `not-found.tsx` boundaries, and shadcn/ui primitives (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label). Pages show honest empty states — no fake data, no backend logic, no AI logic.
 - **Task 5 — AI Agent Foundation (T2):** Provider-agnostic agent core with native tool calling, `POST /api/chat`, server-injected campus clock, safety system prompt, tool registry, 13 passing unit tests (mock provider), and a live smoke test against Groq. Files: `src/lib/ai/{agent,prompt,datetime,errors}.ts`, `src/lib/ai/provider/{types,openai,index}.ts`, `src/lib/ai/tools/{registry,index,get-current-datetime}.ts`, `src/lib/ai/__tests__/*.test.ts`, `src/app/api/chat/route.ts`, `src/types/ai.ts`, `scripts/ai-smoke.ts`, `vitest.config.ts`. Deps added: `openai`, `zod@^4`; dev `vitest@^3`, `tsx`, `dotenv`. Scripts: `npm test`, `npm run ai:smoke`. None of the 9 campus tools yet (Tasks 6–7).
+- **Task 6 — AI Read Tools (T2):** Implemented the six read tools — `get_schedule`, `get_next_class`, `get_assignments`, `get_announcements`, `get_events`, `check_room_availability` — each as a `ToolDefinition` in `src/lib/ai/tools/` that validates params with zod, calls the backend service layer, and maps `ServiceResponse` → `ToolResult` (`src/lib/ai/tools/service.ts` `fromService()`). Registered in `createDefaultRegistry()`. Files: `src/lib/ai/tools/{get-schedule,get-next-class,get-assignments,get-announcements,get-events,check-room-availability,service}.ts`, `src/lib/ai/__tests__/read-tools.test.ts` (14 tests). Verified: `tsc`, `next build`, `eslint`, 27/27 vitest, and a live agent smoke — correct tool selection + parameter/date extraction, backend errors relayed safely with no invention. Action tools (`book_room`, `register_for_event`, `cancel_registration`) remain for Task 7.
 - **Task 10 — Dashboard:** Built the CampusOS dashboard at `/dashboard`. Added domain types (`src/lib/types.ts`, mirrors `schema/schema.md`), date/time helpers (`src/lib/datetime.ts`, Sunday–Thursday week aware), dashboard selectors (`src/lib/dashboard-selectors.ts`: today's classes, next class, active announcements, upcoming events, upcoming deadlines, room-availability with the AGENTS.md overlap rule, summary stats), and a backend-ready data service (`src/lib/data/dashboard.ts`) that fetches `GET /api/dashboard`. Widgets in `src/components/dashboard/`: stat cards, Today's Schedule (highlights next class), Assignment Deadlines (proximity badges), Announcements (priority-sorted), Upcoming Events, Rooms Available Now. All wired through a client component (`dashboard-content.tsx`) handling four states — loading (skeletons), ready (populated), empty (backend not connected → 404), error (retryable). No runtime JSON/seed data or fake permanent data; Supabase remains the single source of truth. Verified populated + empty + error states across desktop/tablet/mobile using a throwaway local API route (since deleted).
 
 ### In Progress
@@ -76,7 +77,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 3: Room Booking | Backend | T1 | COMPLETED |
 | Task 4: Event Registration | Backend | T1 | COMPLETED |
 | Task 5: AI Agent Foundation | AI | T2 | COMPLETED |
-| Task 6: AI Read Tools | AI | T2 | NOT STARTED |
+| Task 6: AI Read Tools | AI | T2 | COMPLETED |
 | Task 7: AI Action Tools | AI | T2 | NOT STARTED |
 | Task 8: AI Reasoning & Safety | AI | T2 | NOT STARTED |
 | Task 9: Frontend Foundation | Frontend| T3 | COMPLETED |
@@ -145,18 +146,22 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 5. Add a mock-provider test in `src/lib/ai/__tests__/`.
 
 ### Tools
-| Tool | Owner | Status | Backend Dependency |
+All tool implementations live in `src/lib/ai/tools/`. Read tools call the backend service layer and map `ServiceResponse` → `ToolResult` via `fromService()` in `src/lib/ai/tools/service.ts`.
+
+| Tool | Owner | Status | Backend service used |
 |------|-------|--------|--------------------|
 | get_current_datetime *(utility, not one of the 9)* | T2 | COMPLETED | none |
-| get_schedule | T2 | NOT STARTED | schedules |
-| get_next_class | T2 | NOT STARTED | schedules |
-| get_assignments | T2 | NOT STARTED | assignments |
-| get_announcements | T2 | NOT STARTED | announcements |
-| get_events | T2 | NOT STARTED | events |
-| check_room_availability | T2 | NOT STARTED | rooms/bookings |
-| book_room | T2 | NOT STARTED | room booking |
-| register_for_event | T2 | NOT STARTED | event registration |
-| cancel_registration | T2 | NOT STARTED | event registration |
+| get_schedule | T2 | COMPLETED | `getSchedules()` |
+| get_next_class | T2 | COMPLETED | `getSchedules()` |
+| get_assignments | T2 | COMPLETED | `getAssignments()` |
+| get_announcements | T2 | COMPLETED | `getAnnouncements()` |
+| get_events | T2 | COMPLETED | `getEvents()` |
+| check_room_availability | T2 | COMPLETED | `getAvailableRooms()` |
+| book_room | T2 | NOT STARTED | room booking (Task 7) |
+| register_for_event | T2 | NOT STARTED | event registration (Task 7) |
+| cancel_registration | T2 | NOT STARTED | event registration (Task 7) |
+
+**Filtering semantics (Task 6):** `get_schedule(day?)` filters by exact weekday. `get_next_class(current_day, current_time)` scans the current day forward through the Sun–Thu week (wraps to next week; returns `{ next_class, is_today }`). `get_assignments(course?, status?, due_before?)` — course = case-insensitive substring on code/title, `due_before` inclusive. `get_announcements(priority?, active_only?)` — `active_only` compares `expires >= ctx.now.date`. `get_events(date?, upcoming_only?)` — `date` spans multi-day events; `upcoming_only` excludes completed/cancelled/ended. `check_room_availability` validates start<end then delegates all conflict/capacity/equipment logic to the backend.
 
 ## 10. Frontend Status
 - **Framework:** Next.js 16 (App Router, TypeScript, Tailwind CSS v4, shadcn/ui) initialized at repo root. `npm run dev` starts the app.
@@ -175,9 +180,9 @@ See `.env.example`. All server-only.
 - `CAMPUS_TIMEZONE` — IANA zone used to resolve today/tomorrow (default `Asia/Dhaka`)
 
 ## 10b. Current Next Step
-- **T2:** Task 6 (read tools) once T1's `src/services/*` land on `main`; tool schemas can be pre-written from `AGENTS.md` §7.
-- **T1:** Rebase `Supabase-Foundation` onto `main` (keep Task 9 files), merge, push Tasks 2–4.
-- **T3:** Task 10+; build Task 16 against the `/api/chat` contract in §9.
+- **T2:** Task 7 (action tools: `book_room`, `register_for_event`, `cancel_registration`) wrapping `src/services/room_bookings.ts` (`createBooking`/`cancelBooking`) and `src/services/event_registrations.ts`. Read tools (Task 6) are done.
+- **Env:** Full live-data verification of AI tools requires Supabase env vars in `.env` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) + `npm run seed`. Without them, tools return a config error which the agent relays safely.
+- **T3:** Task 11+; build Task 16 against the `/api/chat` contract in §9.
 
 ## 11. Git / Collaboration Rules
 - `git pull origin main` before starting work.
