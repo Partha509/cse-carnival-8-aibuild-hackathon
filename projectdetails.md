@@ -27,6 +27,8 @@ CampusOS provides a single intelligent interface for:
 - **Supabase PostgreSQL** (Persistent Database)
 - **LLM Provider** — OpenAI or Groq via `LLM_PROVIDER`; both use the OpenAI-compatible chat-completions API through a single provider class (`src/lib/ai/provider/`). Groq verified live.
 - **Native Function/Tool Calling** — implemented (`src/lib/ai/agent.ts`, zod-validated tool registry)
+- Zod (Schema validation)
+- React Server Actions / Next.js API Routes (Backend layer)
 
 ## 4. System Architecture
 
@@ -143,14 +145,21 @@ User
 - **Seed Data:** JSON files in `data/` are seed data **only**. They are not the runtime source of truth.
 
 ## 7. Backend Architecture
-*Planned implementation:*
-- **API/Server Layer:** Next.js Route Handlers or Server Actions to receive requests.
-- **Validation:** Zod schemas to enforce strict data types before touching services.
-- **Services:** Reusable TypeScript functions handling business logic.
-- **Database Access:** Supabase Client.
-- **Error Handling:** Standardized error formats to return safe messages to the UI and AI.
-- **Persistence:** All edits must save permanently to Supabase.
-- **CRUD:** Complete Create, Read, Update, Delete for all 5 systems.
+*Implemented (Tasks 1–4)*
+- **API/Server Layer:** Next.js Route Handlers / Server Actions (frontend). Admin client (`src/lib/supabase/admin.ts`) for scripts.
+- **Validation:** Zod schemas in `src/lib/validations/` enforce strict data types before any service call.
+- **Services:** Reusable async TypeScript functions in `src/services/`. Consistent `{ data, error }` response format.
+- **Database Access:** `src/lib/supabase/server.ts` (Next.js request context) and `src/lib/supabase/admin.ts` (scripts/background).
+- **Error Handling:** Human-readable error messages in the unified response wrapper; no raw DB errors exposed.
+- **Persistence:** All mutations write permanently to Supabase PostgreSQL.
+- **Room Booking Architecture:**
+  - Application-level overlap guard: `new_start < existing_end AND new_end > existing_start`.
+  - Availability check: status=available + capacity threshold + equipment containment + no time overlap.
+  - DB-level `EXCLUDE USING gist` constraint as final safety net.
+- **Event Registration Architecture:**
+  - Pre-insert checks: event existence, status (not cancelled/completed), capacity (`registered < capacity`), duplicate (`UNIQUE(event_id, student_id)`).
+  - Post-insert atomic update: increments `registered` count; sets `status=full` when at capacity.
+  - Cancellation rollback: decrements `registered`; reverts `status` from `full` to `upcoming`.
 
 ## 8. CRUD Requirements
 Full CRUD must be supported in the Dashboard for:
@@ -277,7 +286,7 @@ The frontend strictly follows `docs/frontend-uiux.md`.
 
 ## 19. Current Implementation Status
 *Accurate as of the latest repository inspection.*
-- **Backend/Database:** Planned (NOT STARTED). No framework or database connection exists.
-- **Frontend/UI:** Foundation COMPLETE (Task 9) — Next.js 16 app shell, 7 routes with empty states, shadcn/ui components. Data pages not started.
-- **AI Agent:** Foundation COMPLETE (Task 5) — `/api/chat`, provider abstraction, native tool-calling loop, system prompt, tests. 0/9 campus tools (Tasks 6–8 pending backend merge).
+- **Backend/Database:** Implemented (Tasks 1–4) — Supabase configured, schema/migrations, CRUD service layer, room booking (overlap detection) and event registration (capacity + duplicate prevention).
+- **Frontend/UI:** Foundation COMPLETE (Task 9) + Dashboard (Task 10) — Next.js 16 app shell, 7 routes, shadcn/ui components, dashboard widgets. Data CRUD pages (Tasks 11–16) not started.
+- **AI Agent:** Foundation COMPLETE (Task 5) — `/api/chat`, provider abstraction, native tool-calling loop, system prompt, tests. 0/9 campus tools (Tasks 6–8).
 - **Documentation:** `docs/frontend-uiux.md`, `project-context.md`, `AGENTS.md`, and `claude.md` have been established to govern future development. Seed data and schemas are present in `data/` and `schema/`.
