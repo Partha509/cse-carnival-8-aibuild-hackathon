@@ -4,7 +4,9 @@
 CampusOS is an intelligent university platform being built for the AI Build Hackathon. It consists of two major parts: a Campus Data Manager (dashboard) and an AI Agent. The fundamental requirement of this project is that both the dashboard and the AI Agent must operate on **real-time/live campus data**. The AI must understand and act on the live backend state, not a separate or mock database.
 
 ## 2. Source of Truth Hierarchy
+
 When resolving conflicts in requirements or instructions, follow this authority hierarchy:
+
 1. Official problem statement / challenge requirements (`PROBLEM_STATEMENT.md`)
 2. Official schema (`schema/schema.md`)
 3. `project-context.md`
@@ -13,10 +15,14 @@ When resolving conflicts in requirements or instructions, follow this authority 
 6. `PROGRESS.md`
 7. `docs/frontend-uiux.md`
 8. `AGENTS.md` / `agent.md` / `claude.md`
-9. Source code and existing implementation
+9. Source code and actual configuration
 10. `README.md`
 
-Documentation must never contradict the official hackathon requirements or the actual implementation in the repository.
+However, documentation must never falsely describe the implementation.
+
+When determining whether something is actually implemented, tested, or working, always verify the source code and repository state directly.
+
+That avoids a situation where `PROGRESS.md` says something is complete but the code says otherwise.
 
 ## 3. Technology Stack
 The agreed upon technology stack is:
@@ -65,6 +71,7 @@ The AI Agent must adhere to the following safety and behavior rules:
 - **Handle vague requests safely** by seeking clarification.
 - **Use multiple tools when necessary** to piece together information (e.g., checking the schedule and then checking room availability).
 - **Respect current date/time** and university week rules when resolving relative dates like "tomorrow".
+- **The AI Agent must not bypass the backend/service layer to access the database directly from the LLM integration.** The architecture stays: AI Agent → Native Tool → Service Layer → Supabase, rather than letting AI code randomly query Supabase everywhere.
 
 ## 7. Tool Contract
 The following nine AI tools are planned. Their names and parameters must remain consistent across the AI agent configuration, backend implementation, frontend usage, and documentation:
@@ -133,6 +140,9 @@ When contributing to this repository:
 - Push completed work to the remote repository.
 - Do not commit secrets. Keep `.env` files private.
 - Update `project-context.md` after meaningful task completion.
+- Before modifying a file, inspect its current state and determine whether another teammate is actively working in that area.
+- Do not rewrite, revert, or replace working code simply to match an older document.
+- If documentation conflicts with implemented code, inspect the code and update the documentation instead of destroying working implementation.
 
 ## 13. Environment/Security Rules
 Never commit sensitive credentials to the repository, including:
@@ -185,3 +195,17 @@ After completing a task, you must report to the user:
 - Whether the documentation was updated.
 
 Provide concise updates. Do not provide unnecessary commentary.
+
+## 18. Team Ownership
+
+The project has three primary ownership areas:
+
+- Teammate 1 — Backend + Database
+- Teammate 2 — AI Agent
+- Teammate 3 — Frontend + UI/UX
+
+Agents must respect ownership boundaries.
+
+A teammate may inspect another area for integration or debugging, but should not make unrelated architectural changes there without coordination.
+
+The detailed task assignments and dependencies are maintained in `project-context.md`.
