@@ -39,6 +39,7 @@ Supabase PostgreSQL (Single Source of Truth)
 - **Frontend Design System Guidelines:** Created `docs/frontend-uiux.md` outlining typography, colors, layout, and UI state conventions.
 - **Project Structure Analysis:** Audited seed data and schemas.
 - **Next.js & Supabase Foundation:** Initialized Next.js, Tailwind, TypeScript, Supabase client/server utilities, database schema, types, and seed scripts.
+- **Backend CRUD Services:** Implemented unified validation (using Zod) and pure async service functions for all core entities (schedules, rooms, events, announcements, assignments).
 
 ### In Progress
 - N/A
@@ -63,7 +64,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task | Area | Owner | Status |
 |------|------|-------|--------|
 | Task 1: Project + Supabase Foundation | Backend | T1 | COMPLETED |
-| Task 2: Backend CRUD | Backend | T1 | NOT STARTED |
+| Task 2: Backend CRUD | Backend | T1 | COMPLETED |
 | Task 3: Room Booking | Backend | T1 | NOT STARTED |
 | Task 4: Event Registration | Backend | T1 | NOT STARTED |
 | Task 5: AI Agent Foundation | AI | T2 | NOT STARTED |
@@ -99,7 +100,10 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Seed Location:** `scripts/seed.ts` (Parses from `data/`)
 
 ## 8. API / Service Contract
-*Pending Implementation (Tasks 2-4)*
+*Implemented (Task 2)*
+- **Service Layer (`src/services/`)**: `schedules.ts`, `rooms.ts`, `events.ts`, `announcements.ts`, `assignments.ts`.
+- **Validation**: Strict Zod schemas in `src/lib/validations/`.
+- **Response Format**: `Promise<{ data: T | null, error: string | null }>`
 
 ## 9. AI Tool Contract
 | Tool | Owner | Status | Backend Dependency |

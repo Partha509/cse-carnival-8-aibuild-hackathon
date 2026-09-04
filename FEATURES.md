@@ -28,11 +28,11 @@ The complete feature set is organized into the following areas:
 ## 2. Campus Data Management
 CampusOS requires a robust backend capable of comprehensive CRUD (Create, Read, Update, Delete) operations across five core systems, ensuring data persists in Supabase PostgreSQL.
 
-- `[ ]` **Schedules CRUD:** Full management of class schedules.
-- `[ ]` **Rooms CRUD:** Full management of campus rooms and facilities.
-- `[ ]` **Events CRUD:** Full management of campus events.
-- `[ ]` **Announcements CRUD:** Full management of notices.
-- `[ ]` **Assignments CRUD:** Full management of deadlines and tasks.
+- `[x]` **Schedules CRUD:** Full management of class schedules.
+- `[x]` **Rooms CRUD:** Full management of campus rooms and facilities.
+- `[x]` **Events CRUD:** Full management of campus events.
+- `[x]` **Announcements CRUD:** Full management of notices.
+- `[x]` **Assignments CRUD:** Full management of deadlines and tasks.
 
 *User Value:* Ensures university staff or administrators can effortlessly keep campus data accurate and up-to-date in real time.
 

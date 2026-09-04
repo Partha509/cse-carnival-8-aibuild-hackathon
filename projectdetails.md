@@ -26,7 +26,8 @@ CampusOS provides a single intelligent interface for:
 - **shadcn/ui**
 - **Supabase PostgreSQL** (Persistent Database)
 - **LLM Provider** (Not yet implemented; to be decided, e.g., OpenAI or Groq)
-- **Native Function/Tool Calling**
+- Zod (Schema validation)
+- React Server Actions / Next.js API Routes (Backend layer)**
 
 ## 4. System Architecture
 
@@ -264,7 +265,7 @@ The frontend strictly follows `docs/frontend-uiux.md`.
 
 ## 19. Current Implementation Status
 *Accurate as of the latest repository inspection.*
-- **Backend/Database:** Planned (NOT STARTED). No framework or database connection exists.
-- **Frontend/UI:** Planned (NOT STARTED). No Next.js or React code exists.
+- **Backend/Database:** Partially Implemented. Foundation established, Supabase configured, and basic CRUD services created (Tasks 1 & 2 completed).
+- **Frontend/UI:** Planned (NOT STARTED). No Next.js components exist yet.
 - **AI Agent:** Planned (NOT STARTED).
 - **Documentation:** `docs/frontend-uiux.md`, `project-context.md`, `AGENTS.md`, and `claude.md` have been established to govern future development. Seed data and schemas are present in `data/` and `schema/`.

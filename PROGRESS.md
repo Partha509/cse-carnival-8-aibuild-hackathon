@@ -26,10 +26,10 @@ The repository currently holds the official problem statement, seed data schemas
   - Objective: Establish Supabase project, schema, and import seed data.
   - Dependencies: None
   - Completion: Schema matches official requirements, seed data imported.
-- `[ ]` **2. Backend CRUD** (T1)
-  - Objective: Implement CRUD APIs for all 5 systems.
-  - Dependencies: T1
-  - Completion: Endpoints exist and persist data successfully.
+- `[x]` **2. Backend CRUD** (T1)
+  - Objective: Implement CRUD operations for all entities.
+  - Dependencies: Task 1
+  - Completion: Zod validation and Supabase service queries created.Endpoints exist and persist data successfully.
 - `[ ]` **3. Room booking** (T1)
   - Objective: Implement overlap-safe room booking.
   - Dependencies: T2
@@ -156,8 +156,8 @@ The repository currently holds the official problem statement, seed data schemas
 - `[x]` Schema
 - `[x]` Migrations
 - `[x]` Seed data
-- `[ ]` Backend services
-- `[ ]` CRUD
+- `[x]` Backend services
+- `[x]` CRUD
 - `[ ]` Booking logic
 - `[ ]` Registration logic
 - `[ ]` Testing
