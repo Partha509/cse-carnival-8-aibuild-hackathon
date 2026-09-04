@@ -44,6 +44,7 @@ Supabase PostgreSQL (Single Source of Truth)
 - **Event Registration Service:** Full registration lifecycle with capacity enforcement, duplicate prevention, and automatic `registered` count + `status` synchronization.
 - **Task 9 — Frontend Foundation:** Initialized Next.js 16 (App Router, TypeScript, Tailwind CSS v4) at the repository root with shadcn/ui (radix-nova style). Implemented design tokens from `docs/frontend-uiux.md` in `src/app/globals.css` (brand, surface, status, AI, and domain colors with light/dark values), Inter typography, responsive app shell (`src/components/layout/`: sticky desktop sidebar ≥lg, mobile header + sheet drawer <lg), all 7 routes (`/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai` — `/` redirects to `/dashboard`), shared `PageHeader`/`EmptyState`/`ErrorState` components, `error.tsx` + `not-found.tsx` boundaries, and shadcn/ui primitives (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label). Pages show honest empty states — no fake data, no backend logic, no AI logic.
 - **Task 10 — Dashboard:** Built the CampusOS dashboard at `/dashboard`. Added domain types (`src/lib/types.ts`, mirrors `schema/schema.md`), date/time helpers (`src/lib/datetime.ts`, Sunday–Thursday week aware), dashboard selectors (`src/lib/dashboard-selectors.ts`: today's classes, next class, active announcements, upcoming events, upcoming deadlines, room-availability with the AGENTS.md overlap rule, summary stats), and a backend-ready data service (`src/lib/data/dashboard.ts`) that fetches `GET /api/dashboard`. Widgets in `src/components/dashboard/`: stat cards, Today's Schedule (highlights next class), Assignment Deadlines (proximity badges), Announcements (priority-sorted), Upcoming Events, Rooms Available Now. All wired through a client component (`dashboard-content.tsx`) handling four states — loading (skeletons), ready (populated), empty (backend not connected → 404), error (retryable). No runtime JSON/seed data or fake permanent data; Supabase remains the single source of truth. Verified populated + empty + error states across desktop/tablet/mobile using a throwaway local API route (since deleted).
+- **Task 11 — Schedule UI:** Built full schedule management at `/schedule` wired to **live backend CRUD**. Added HTTP API routes (`src/app/api/schedules/route.ts` GET+POST, `src/app/api/schedules/[id]/route.ts` PATCH+DELETE) that call the existing Zod-validated service layer (`src/services/schedules.ts`) → Supabase. Client data layer `src/lib/data/schedules.ts`. Components in `src/components/schedule/`: `schedule-content.tsx` (list with desktop table / mobile card list, day + course/title filters, sorted by weekday then time, readable 12h times, loading skeleton / empty / no-match / error states), `schedule-form-dialog.tsx` (create + edit with client-side validation reusing the backend `ScheduleSchema` plus an end-time-after-start rule), `delete-schedule-dialog.tsx` (confirmation for destructive delete), `feedback-toaster.tsx` (scoped success/error toasts). Verified full CRUD end-to-end against live Supabase (create/edit/delete persist + live UI update, duplicate & invalid input rejected with 400) across desktop/tablet/mobile. No fake data.
 
 ### In Progress
 - N/A
@@ -78,7 +79,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 8: AI Reasoning & Safety | AI | T2 | NOT STARTED |
 | Task 9: Frontend Foundation | Frontend| T3 | COMPLETED |
 | Task 10: Dashboard | Frontend| T3 | COMPLETED |
-| Task 11: Schedule UI | Frontend| T3 | NOT STARTED |
+| Task 11: Schedule UI | Frontend| T3 | COMPLETED |
 | Task 12: Rooms UI | Frontend| T3 | NOT STARTED |
 | Task 13: Events UI | Frontend| T3 | NOT STARTED |
 | Task 14: Announcements UI | Frontend| T3 | NOT STARTED |
@@ -114,6 +115,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Event Registration Service (`src/services/event_registrations.ts`)**: `registerForEvent`, `cancelRegistration`, `getRegistrationsByEvent`, `getRegistrationStatus`. Capacity enforcement, duplicate prevention (by `student_id`), and `registered` count kept consistent on every mutation.
 - **Validation scripts**: `npm run verify` — 26/26 tests passed against live Supabase.
 - **Frontend expectation (Task 17):** the dashboard data layer (`src/lib/data/dashboard.ts`) fetches `GET /api/dashboard` returning `{ schedules, rooms, events, announcements, assignments }`; until that route exists a 404 surfaces as an empty state.
+- **HTTP API routes (implemented):** `GET/POST /api/schedules` and `PATCH/DELETE /api/schedules/[id]` (Task 11) — thin handlers over `src/services/schedules.ts`, returning `{ data }` or `{ error }` with appropriate status codes. Remaining entity routes (rooms, events, announcements, assignments) pending with their UIs.
 
 ## 9. AI Tool Contract
 | Tool | Owner | Status | Backend Dependency |
@@ -135,7 +137,8 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Shared components:** `src/components/` — `PageHeader`, `EmptyState`, `ErrorState`; shadcn/ui primitives in `src/components/ui/` (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label).
 - **Design tokens:** `src/app/globals.css` per `docs/frontend-uiux.md` (light + dark values; Tailwind utilities like `text-ai-accent`, `bg-danger/10`, `text-schedule` available).
 - **Dashboard (Task 10):** `/dashboard` renders live widgets (stat cards, Today's Schedule, Assignment Deadlines, Announcements, Upcoming Events, Rooms Available Now) with loading/empty/error states. Data layer: `src/lib/types.ts`, `src/lib/datetime.ts`, `src/lib/dashboard-selectors.ts`, `src/lib/data/dashboard.ts`. Widgets in `src/components/dashboard/`. Shared `src/components/status-badges.tsx`.
-- **Pending:** Tasks 11–16 (per-system CRUD UIs, AI chat interface) and Task 17 (wire the dashboard/pages to the real backend API).
+- **Schedule UI (Task 11):** `/schedule` full CRUD wired to live Supabase via `/api/schedules` routes. Data layer `src/lib/data/schedules.ts`; components in `src/components/schedule/` (content/list+filters, form dialog with validation, delete confirmation, feedback toaster). Desktop table + mobile card list, day/course filters, readable 12h times, loading/empty/error/success states.
+- **Pending:** Tasks 12–16 (rooms, events, announcements, assignments UIs, AI chat interface) and Task 17 (wire the dashboard to the real backend API).
 
 ## 11. Git / Collaboration Rules
 - `git pull origin main` before starting work.
