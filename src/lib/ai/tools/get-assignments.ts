@@ -22,7 +22,7 @@ const schema = z.object({
 export const getAssignmentsTool: ToolDefinition<typeof schema> = {
   name: "get_assignments",
   description:
-    "Get assignments. Optionally filter by course, status, and/or a due-before date. Returns course, title, deadline, submission platform, status, and marks.",
+    'Get assignments. Optionally filter by course, status, and/or a due-before date. For "due this week" or "due by <date>" questions, set due_before to that date (use the resolved dates in the system prompt). Returns course, title, deadline, submission platform, status, and marks.',
   schema,
   progressLabel: "Checking assignments",
   async execute({ course, status, due_before }) {

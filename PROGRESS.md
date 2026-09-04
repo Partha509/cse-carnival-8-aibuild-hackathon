@@ -54,10 +54,10 @@ The repository holds the official problem statement, seed data schemas, architec
   - Objective: Implement the 3 action tools (book/register/cancel).
   - Dependencies: T6, backend booking + registration services.
   - Completion: `book_room`, `register_for_event`, `cancel_registration` implemented as native tools that resolve names→ids and call the service layer (business logic stays server-side); 10 unit tests; live agent smoke confirms correct selection/params and safe error relay. Full live-data mutation pending Supabase env config.
-- `[ ]` **8. AI reasoning/safety** (T2)
+- `[x]` **8. AI reasoning/safety** (T2)
   - Objective: Implement clarification, refusal, and multi-tool logic.
   - Dependencies: T7
-  - Completion: Vague requests trigger clarification, unauthorized actions are refused.
+  - Completion: Deterministic relative-date resolution injected into the prompt; multi-tool + refusal + clarification guidance strengthened; verified live (next-Wednesday date, out-of-scope refusal, due-this-week due_before, vague-booking clarification).
 
 ### Phase 3 — Frontend
 - `[x]` **9. Frontend foundation** (T3)
@@ -169,6 +169,8 @@ The repository holds the official problem statement, seed data schemas, architec
 - `[x]` Native tool calling (loop + registry)
 - `[x]` Read tools (6/6 — Task 6)
 - `[x]` Action tools (3/3 — Task 7)
+- `[x]` Reasoning
+- `[x]` Safety logic
 - `[ ]` Action tools
 - `[ ]` Reasoning
 - `[ ]` Safety logic
@@ -207,6 +209,7 @@ The repository holds the official problem statement, seed data schemas, architec
 - Tasks 6–7 blocked until Teammate 1's services are on `main`.
 
 ## 9. Recent Changes
+- [2026-09-04] Task 8: AI reasoning & safety — `resolveRelativeDates()` in `src/lib/ai/datetime.ts`, prompt hardening in `src/lib/ai/prompt.ts`, `get-assignments` description tweak; `reasoning.test.ts` (4 tests, 41 total).
 - [2026-09-04] Task 7: AI action tools — `src/lib/ai/tools/{book-room,register-for-event,cancel-registration,resolve}.ts` + `action-tools.test.ts` (10 tests); made optional tool params `.nullish()` so Groq accepts null for omitted optionals.
 - [2026-09-04] Task 6: AI read tools — `src/lib/ai/tools/{get-schedule,get-next-class,get-assignments,get-announcements,get-events,check-room-availability,service}.ts`, registered in the default registry; `read-tools.test.ts` (14 tests). Each wraps the backend service layer.
 - [2026-09-04] Task 5: AI agent foundation — `src/lib/ai/**`, `src/app/api/chat/route.ts`, `src/types/ai.ts`, `scripts/ai-smoke.ts`, `vitest.config.ts`; `.env.example` gained `LLM_PROVIDER`/`GROQ_*`/`OPENAI_MODEL`/`CAMPUS_TIMEZONE`; `npm test` and `npm run ai:smoke` scripts.
@@ -214,7 +217,7 @@ The repository holds the official problem statement, seed data schemas, architec
 
 ## 10. Testing Status
 - `[ ]` Backend tests
-- `[~]` AI tests (37 unit tests: agent loop, datetime, 6 read tools, 3 action tools; full live-data mutation tests pending Supabase config)
+- `[~]` AI tests (41 unit tests: agent loop, datetime, relative-date resolution, prompt, 6 read tools, 3 action tools; full live-data tests pending Supabase config)
 - `[ ]` Frontend tests
 - `[ ]` Integration tests
 - `[ ]` E2E

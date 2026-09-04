@@ -114,7 +114,7 @@ The AI Agent must be implemented using native tool calling, backed by real APIs.
 - `[ ]` **Clarification:** Ask follow-up questions if a request is ambiguous (e.g., missing time or room).
 - `[ ]` **Refusal:** Politely refuse unauthorized actions or actions that fail backend validation.
 - `[ ]` **Latest Data:** Guarantee that AI responses use real-time, non-stale data.
-- `[~]` **Date/Time Reasoning:** Safely resolve relative terms like "tomorrow". (Foundation: live campus clock + Sun–Thu week bounds injected per request; full NL resolution tested in Task 8.)
+- `[x]` **Date/Time Reasoning:** Safely resolve relative terms like "tomorrow". (Deterministic `resolveRelativeDates()` injects exact today/tomorrow/this-week/next-week dates into the prompt; academic week rolls forward on weekends. Verified live.)
 - `[~]` **Action Confirmation:** Wait for the backend tool to return success before telling the user the action is complete. (Loop returns tool errors to the model as failures; enforced end-to-end once action tools exist in Task 7.)
 
 ## 11. Example User Flows

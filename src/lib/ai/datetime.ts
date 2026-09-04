@@ -68,3 +68,49 @@ export function getCampusNow(
     weekEnd,
   };
 }
+
+/** Adds `delta` days to a YYYY-MM-DD string, returning YYYY-MM-DD. */
+export function addDays(dateStr: string, delta: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + delta));
+  return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
+}
+
+export interface AcademicWeek {
+  start: string;
+  end: string;
+  days: { weekday: string; date: string }[];
+}
+
+export interface RelativeDates {
+  today: string;
+  tomorrow: string;
+  dayAfterTomorrow: string;
+  yesterday: string;
+  thisWeek: AcademicWeek;
+  nextWeek: AcademicWeek;
+}
+
+function academicWeekFromSunday(sunday: string): AcademicWeek {
+  const days = [0, 1, 2, 3, 4].map((o) => ({ weekday: WEEKDAYS[o], date: addDays(sunday, o) }));
+  return { start: days[0].date, end: days[4].date, days };
+}
+
+/**
+ * Resolves relative dates deterministically so the model uses exact dates
+ * instead of doing error-prone date math. The academic week is Sunday–Thursday;
+ * on Friday/Saturday "this week" rolls forward to the upcoming Sunday.
+ */
+export function resolveRelativeDates(now: CampusNow): RelativeDates {
+  const idx = WEEKDAYS.indexOf(now.weekday); // 0 = Sunday … 6 = Saturday
+  const daysToThisSunday = idx <= 4 ? -idx : 7 - idx;
+  const thisSunday = addDays(now.date, daysToThisSunday);
+  return {
+    today: now.date,
+    tomorrow: addDays(now.date, 1),
+    dayAfterTomorrow: addDays(now.date, 2),
+    yesterday: addDays(now.date, -1),
+    thisWeek: academicWeekFromSunday(thisSunday),
+    nextWeek: academicWeekFromSunday(addDays(thisSunday, 7)),
+  };
+}
