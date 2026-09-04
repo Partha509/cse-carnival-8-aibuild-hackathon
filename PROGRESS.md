@@ -98,10 +98,10 @@ The repository holds the official problem statement, seed data schemas, architec
   - Objective: Connect UI components to live backend APIs.
   - Dependencies: T1-T4, T11-T16
   - Completion: UI reflects live DB state.
-- `[ ]` **18. AI-backend integration** (T1+T2)
+- `[x]` **18. AI-backend integration** (T1+T2)
   - Objective: Ensure AI tools use production endpoints.
   - Dependencies: T5-T8, T1-T4
-  - Completion: AI actions hit the live database.
+  - Completion: VERIFIED against live Supabase (2026-09-04). Architecture confirmed AI → Tool → Service → Supabase (AI layer never imports supabase directly; no hardcoded data). All 9 tools exercised live. Bidirectional consistency proven: (a) API/dashboard edit to a schedule room was immediately reflected by the agent; (b) AI `book_room` appeared via `GET /api/rooms/:id/bookings`; (c) AI `register_for_event` added the student and incremented `registered` (22→23), and AI `cancel_registration` removed them and restored the count (23→22). Test artifacts cleaned up.
 - `[ ]` **19. Full E2E** (ALL)
   - Objective: Test Dashboard edit → AI response cycle.
   - Dependencies: T17, T18
@@ -209,6 +209,7 @@ The repository holds the official problem statement, seed data schemas, architec
 - Tasks 6–7 blocked until Teammate 1's services are on `main`.
 
 ## 9. Recent Changes
+- [2026-09-04] Task 18: AI↔Backend integration verified end-to-end on live Supabase (bidirectional data consistency; all 9 tools; no code changes needed).
 - [2026-09-04] Task 8: AI reasoning & safety — `resolveRelativeDates()` in `src/lib/ai/datetime.ts`, prompt hardening in `src/lib/ai/prompt.ts`, `get-assignments` description tweak; `reasoning.test.ts` (4 tests, 41 total).
 - [2026-09-04] Task 7: AI action tools — `src/lib/ai/tools/{book-room,register-for-event,cancel-registration,resolve}.ts` + `action-tools.test.ts` (10 tests); made optional tool params `.nullish()` so Groq accepts null for omitted optionals.
 - [2026-09-04] Task 6: AI read tools — `src/lib/ai/tools/{get-schedule,get-next-class,get-assignments,get-announcements,get-events,check-room-availability,service}.ts`, registered in the default registry; `read-tools.test.ts` (14 tests). Each wraps the backend service layer.
