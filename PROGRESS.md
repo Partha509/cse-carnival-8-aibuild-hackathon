@@ -22,7 +22,7 @@ The repository currently holds the official problem statement, seed data schemas
 ## 4. 29-Task Roadmap
 
 ### Phase 1 — Backend & Database
-- `[ ]` **1. Supabase/backend foundation** (T1)
+- `[x]` **1. Supabase/backend foundation** (T1)
   - Objective: Establish Supabase project, schema, and import seed data.
   - Dependencies: None
   - Completion: Schema matches official requirements, seed data imported.
@@ -152,10 +152,10 @@ The repository currently holds the official problem statement, seed data schemas
 ## 5. Team Progress
 
 ### Teammate 1 — Backend + Database
-- `[ ]` Supabase
-- `[ ]` Schema
-- `[ ]` Migrations
-- `[ ]` Seed data
+- `[x]` Supabase
+- `[x]` Schema
+- `[x]` Migrations
+- `[x]` Seed data
 - `[ ]` Backend services
 - `[ ]` CRUD
 - `[ ]` Booking logic
