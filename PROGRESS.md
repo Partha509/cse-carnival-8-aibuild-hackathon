@@ -9,7 +9,7 @@
 
 ## 2. Project Status
 **Overall State:** Foundation Phase.
-The repository holds the official problem statement, seed data schemas, architecture documentation, and the initialized Next.js frontend foundation (Task 9). Backend, AI agent, and data-driven UI work has not started yet.
+The repository holds the official problem statement, seed data schemas, architecture documentation, the initialized Next.js frontend foundation (Task 9), and the AI agent foundation (Task 5: provider abstraction, native tool-calling loop, `/api/chat`). Backend services (Tasks 1–4) are in progress on Teammate 1's `Supabase-Foundation` branch and not yet merged; the 9 campus AI tools and data-driven UI are not started.
 
 ## 3. Completed Work
 - `[x]` Project structure and schema analysis.
@@ -19,6 +19,7 @@ The repository holds the official problem statement, seed data schemas, architec
 - `[x]` `projectdetails.md` created (Technical architecture).
 - `[x]` `FEATURES.md` created (Authoritative feature inventory).
 - `[x]` Task 9 — Frontend foundation: Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui initialized at repo root; design tokens, app shell (sidebar + mobile drawer), 7 routes with empty states, reusable UI components (Button, Card, Badge, Input, Select, Dialog, Table, Skeleton, EmptyState, ErrorState). Verified with production build and manual route/responsiveness testing.
+- `[x]` Task 5 — AI agent foundation: provider abstraction (`LLM_PROVIDER=openai|groq`, single OpenAI-compatible class), native tool-calling agent loop with zod-validated tool registry, safety system prompt with server-injected campus clock (Sun–Thu week, `Asia/Dhaka`), sanitized error handling, `POST /api/chat` (request validation, 400/500/502), shared types in `src/types/ai.ts`. Verified: `tsc`, `next build`, `eslint`, 13 vitest unit tests (mock provider), live smoke test on Groq (`openai/gpt-oss-120b`) — tool round-trip works and the agent refuses to invent schedule data / fake a booking when no tool exists.
 
 ## 4. 29-Task Roadmap
 
@@ -41,22 +42,22 @@ The repository holds the official problem statement, seed data schemas, architec
   - Completion: 12/12 live Supabase tests passed. Capacity checks, duplicate prevention (student_id), count/status consistency all verified.
 
 ### Phase 2 — AI Agent
-- `[ ]` **5. AI agent foundation** (T2)
+- `[x]` **5. AI agent foundation** (T2)
   - Objective: Configure LLM and basic agent architecture.
-  - Dependencies: T1-T4 API contracts.
-  - Completion: Agent can receive messages and reply.
-- `[ ]` **6. AI read tools** (T2)
+  - Dependencies: Task 9 scaffold (done). Backend contracts only needed from Task 6 onward.
+  - Completion: Agent receives messages, calls tools natively, and replies via `/api/chat`. Verified live on Groq.
+- `[x]` **6. AI read tools** (T2)
   - Objective: Implement the 6 read/query tools.
-  - Dependencies: T5
-  - Completion: Agent successfully fetches live data.
-- `[ ]` **7. AI action tools** (T2)
+  - Dependencies: T5, backend services (T1–T4, now on main).
+  - Completion: `get_schedule`, `get_next_class`, `get_assignments`, `get_announcements`, `get_events`, `check_room_availability` implemented as native tools that call the service layer; 14 unit tests; live agent smoke confirms correct tool selection + param extraction. Full live-data return pending Supabase env config.
+- `[x]` **7. AI action tools** (T2)
   - Objective: Implement the 3 action tools (book/register/cancel).
-  - Dependencies: T6
-  - Completion: Agent successfully mutates live data.
-- `[ ]` **8. AI reasoning/safety** (T2)
+  - Dependencies: T6, backend booking + registration services.
+  - Completion: `book_room`, `register_for_event`, `cancel_registration` implemented as native tools that resolve names→ids and call the service layer (business logic stays server-side); 10 unit tests; live agent smoke confirms correct selection/params and safe error relay. Full live-data mutation pending Supabase env config.
+- `[x]` **8. AI reasoning/safety** (T2)
   - Objective: Implement clarification, refusal, and multi-tool logic.
   - Dependencies: T7
-  - Completion: Vague requests trigger clarification, unauthorized actions are refused.
+  - Completion: Deterministic relative-date resolution injected into the prompt; multi-tool + refusal + clarification guidance strengthened; verified live (next-Wednesday date, out-of-scope refusal, due-this-week due_before, vague-booking clarification).
 
 ### Phase 3 — Frontend
 - `[x]` **9. Frontend foundation** (T3)
@@ -164,9 +165,12 @@ The repository holds the official problem statement, seed data schemas, architec
 - `[ ]` Testing
 
 ### Teammate 2 — AI Agent
-- `[ ]` LLM integration
-- `[ ]` Native tool calling
-- `[ ]` Read tools
+- `[x]` LLM integration
+- `[x]` Native tool calling (loop + registry)
+- `[x]` Read tools (6/6 — Task 6)
+- `[x]` Action tools (3/3 — Task 7)
+- `[x]` Reasoning
+- `[x]` Safety logic
 - `[ ]` Action tools
 - `[ ]` Reasoning
 - `[ ]` Safety logic
@@ -197,27 +201,31 @@ The repository holds the official problem statement, seed data schemas, architec
 *Parallel Development:* Tasks 9–16 (Frontend) can be developed concurrently with Tasks 1–8 (Backend & AI), provided API contracts are agreed upon.
 
 ## 7. Current Sprint / Next Actions
-Initialize the foundational project environments.
-- **T1:** Initialize Supabase and database schema.
-- **T9:** Initialize Next.js, Tailwind, and shadcn/ui.
+- **T1:** Rebase `Supabase-Foundation` onto `main`, merge, and push Tasks 1–4 so AI tools and data pages can integrate.
+- **T2:** Task 6 (read tools) as soon as `src/services/*` land on `main`.
+- **T3:** Task 10 (dashboard) and onward; Task 16 can target the `/api/chat` contract in `project-context.md` §9.
 
 ## 8. Blockers
-- None currently.
+- Tasks 6–7 blocked until Teammate 1's services are on `main`.
 
 ## 9. Recent Changes
+- [2026-09-04] Task 8: AI reasoning & safety — `resolveRelativeDates()` in `src/lib/ai/datetime.ts`, prompt hardening in `src/lib/ai/prompt.ts`, `get-assignments` description tweak; `reasoning.test.ts` (4 tests, 41 total).
+- [2026-09-04] Task 7: AI action tools — `src/lib/ai/tools/{book-room,register-for-event,cancel-registration,resolve}.ts` + `action-tools.test.ts` (10 tests); made optional tool params `.nullish()` so Groq accepts null for omitted optionals.
+- [2026-09-04] Task 6: AI read tools — `src/lib/ai/tools/{get-schedule,get-next-class,get-assignments,get-announcements,get-events,check-room-availability,service}.ts`, registered in the default registry; `read-tools.test.ts` (14 tests). Each wraps the backend service layer.
+- [2026-09-04] Task 5: AI agent foundation — `src/lib/ai/**`, `src/app/api/chat/route.ts`, `src/types/ai.ts`, `scripts/ai-smoke.ts`, `vitest.config.ts`; `.env.example` gained `LLM_PROVIDER`/`GROQ_*`/`OPENAI_MODEL`/`CAMPUS_TIMEZONE`; `npm test` and `npm run ai:smoke` scripts.
 - [2026-09-04] Created initial repository documentation suite (`AGENTS.md`, `claude.md`, `FEATURES.md`, `PROGRESS.md`, `projectdetails.md`, `project-context.md`, `docs/frontend-uiux.md`).
 
 ## 10. Testing Status
 - `[ ]` Backend tests
-- `[ ]` AI tests
+- `[~]` AI tests (41 unit tests: agent loop, datetime, relative-date resolution, prompt, 6 read tools, 3 action tools; full live-data tests pending Supabase config)
 - `[ ]` Frontend tests
 - `[ ]` Integration tests
 - `[ ]` E2E
 - `[ ]` Judge scenarios
 
 ## 11. Deployment Status
-- `[ ]` Local development works
-- `[ ]` Environment configuration mapped
+- `[x]` Local development works (`npm run dev`; AI needs `.env` with an LLM key)
+- `[~]` Environment configuration mapped (AI vars in `.env.example`; Supabase vars pending T1 merge)
 - `[ ]` Deployed to cloud
 - `[ ]` Production verification
 

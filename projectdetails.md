@@ -25,9 +25,10 @@ CampusOS provides a single intelligent interface for:
 - **Tailwind CSS**
 - **shadcn/ui**
 - **Supabase PostgreSQL** (Persistent Database)
-- **LLM Provider** (Not yet implemented; to be decided, e.g., OpenAI or Groq)
+- **LLM Provider** — OpenAI or Groq via `LLM_PROVIDER`; both use the OpenAI-compatible chat-completions API through a single provider class (`src/lib/ai/provider/`). Groq verified live.
+- **Native Function/Tool Calling** — implemented (`src/lib/ai/agent.ts`, zod-validated tool registry)
 - Zod (Schema validation)
-- React Server Actions / Next.js API Routes (Backend layer)**
+- React Server Actions / Next.js API Routes (Backend layer)
 
 ## 4. System Architecture
 
@@ -193,7 +194,20 @@ The backend must validate:
 - **Persistence & Cancellation:** Registering and unregistering must permanently update the database.
 
 ## 11. AI Agent Architecture
-The AI will utilize native tool calling with the following 9 planned tools:
+**Implemented (Task 5):**
+```text
+POST /api/chat  (src/app/api/chat/route.ts — zod request validation, sanitized errors)
+   ↓
+runAgent()      (src/lib/ai/agent.ts — loop: LLM → tool calls → results → LLM, max 6 iterations)
+   ├─ buildSystemPrompt()  (src/lib/ai/prompt.ts — rules + live clock + available/unavailable domains)
+   ├─ getCampusNow()       (src/lib/ai/datetime.ts — CAMPUS_TIMEZONE, Sun–Thu week bounds)
+   ├─ LLMProvider          (src/lib/ai/provider/ — OpenAI | Groq, selected by LLM_PROVIDER)
+   └─ ToolRegistry         (src/lib/ai/tools/ — ToolDefinition { name, description, zod schema, execute(params, ctx) })
+                              ↓ execute() calls src/services/* (never Supabase directly)
+```
+Shared client/server types: `src/types/ai.ts` (`ChatRequest`, `ChatResponse`, `ToolEvent`, `CampusNow`).
+
+The AI will utilize native tool calling with the following 9 planned tools (none implemented yet — Tasks 6–7):
 1. `get_schedule(day?)`
 2. `get_next_class(current_day, current_time)`
 3. `get_assignments(course?, status?, due_before?)`
@@ -272,7 +286,7 @@ The frontend strictly follows `docs/frontend-uiux.md`.
 
 ## 19. Current Implementation Status
 *Accurate as of the latest repository inspection.*
-- **Backend/Database:** Partially Implemented. Foundation established, Supabase configured, and basic CRUD services created (Tasks 1 & 2 completed).
-- **Frontend/UI:** Planned (NOT STARTED). No Next.js components exist yet.
-- **AI Agent:** Planned (NOT STARTED).
+- **Backend/Database:** Implemented (Tasks 1–4) — Supabase configured, schema/migrations, CRUD service layer, room booking (overlap detection) and event registration (capacity + duplicate prevention).
+- **Frontend/UI:** Foundation COMPLETE (Task 9) + Dashboard (Task 10) — Next.js 16 app shell, 7 routes, shadcn/ui components, dashboard widgets. Data CRUD pages (Tasks 11–16) not started.
+- **AI Agent:** Foundation COMPLETE (Task 5) + all 9 campus tools (read tools Task 6, action tools Task 7) + reasoning/safety (Task 8) — `/api/chat`, provider abstraction, native tool-calling loop, name→id resolution, deterministic date resolution, hardened safety prompt, tests. All AI tasks (5–8) complete.
 - **Documentation:** `docs/frontend-uiux.md`, `project-context.md`, `AGENTS.md`, and `claude.md` have been established to govern future development. Seed data and schemas are present in `data/` and `schema/`.
