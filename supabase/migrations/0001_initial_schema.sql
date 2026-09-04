@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS public.room_bookings (
     start_time TEXT NOT NULL,
     end_time TEXT NOT NULL,
     purpose TEXT NOT NULL,
-    -- Prevent overlapping bookings for the same room on the same day
+    -- Prevent overlapping bookings for the same room. The date+time are combined
+    -- into a tsrange so overlap is only detected within the same calendar day.
     CONSTRAINT no_overlap EXCLUDE USING gist (
         room_id WITH =,
-        date WITH =,
-        timerange(start_time::time, end_time::time) WITH &&
+        tsrange((date + start_time::time), (date + end_time::time)) WITH &&
     )
 );
 
@@ -122,8 +122,7 @@ BEGIN
         ALTER TABLE public.room_bookings
             ADD CONSTRAINT no_overlap EXCLUDE USING gist (
                 room_id WITH =,
-                date WITH =,
-                timerange(start_time::time, end_time::time) WITH &&
+                tsrange((date + start_time::time), (date + end_time::time)) WITH &&
             );
     END IF;
 END $$;
