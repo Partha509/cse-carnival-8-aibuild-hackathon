@@ -22,6 +22,17 @@ BEGIN
     END IF;
 END $$;
 
+-- Immutable helper: builds the booking time range from a date + "HH:MM" text
+-- times. Text->time casts are only STABLE, so wrapping them in an IMMUTABLE
+-- function is required to use the expression in a GiST EXCLUDE index.
+CREATE OR REPLACE FUNCTION public.booking_tsrange(d date, s text, e text)
+RETURNS tsrange
+LANGUAGE sql
+IMMUTABLE
+AS $$
+    SELECT tsrange((d + s::time), (d + e::time));
+$$;
+
 -- 1. Schedules Table
 CREATE TABLE IF NOT EXISTS public.schedules (
     id TEXT PRIMARY KEY,
@@ -59,7 +70,7 @@ CREATE TABLE IF NOT EXISTS public.room_bookings (
     -- into a tsrange so overlap is only detected within the same calendar day.
     CONSTRAINT no_overlap EXCLUDE USING gist (
         room_id WITH =,
-        tsrange((date + start_time::time), (date + end_time::time)) WITH &&
+        public.booking_tsrange(date, start_time, end_time) WITH &&
     )
 );
 
@@ -122,7 +133,7 @@ BEGIN
         ALTER TABLE public.room_bookings
             ADD CONSTRAINT no_overlap EXCLUDE USING gist (
                 room_id WITH =,
-                tsrange((date + start_time::time), (date + end_time::time)) WITH &&
+                public.booking_tsrange(date, start_time, end_time) WITH &&
             );
     END IF;
 END $$;
