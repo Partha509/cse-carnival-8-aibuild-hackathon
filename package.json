@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "ai:smoke": "tsx --tsconfig tsconfig.json scripts/ai-smoke.ts",
     "seed": "tsx scripts/seed.ts",
     "verify": "tsx scripts/verify-tasks-3-4.ts"
   },
@@ -17,6 +19,7 @@
     "cn": "^0.2.5",
     "lucide-react": "^1.41.0",
     "next": "16.3.4",
+    "openai": "^7.10.0",
     "radix-ui": "^1.6.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -34,6 +37,7 @@
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }
