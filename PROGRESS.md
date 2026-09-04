@@ -23,22 +23,22 @@ The repository holds the official problem statement, seed data schemas, architec
 ## 4. 29-Task Roadmap
 
 ### Phase 1 — Backend & Database
-- `[ ]` **1. Supabase/backend foundation** (T1)
+- `[x]` **1. Supabase/backend foundation** (T1)
   - Objective: Establish Supabase project, schema, and import seed data.
   - Dependencies: None
   - Completion: Schema matches official requirements, seed data imported.
-- `[ ]` **2. Backend CRUD** (T1)
-  - Objective: Implement CRUD APIs for all 5 systems.
-  - Dependencies: T1
-  - Completion: Endpoints exist and persist data successfully.
-- `[ ]` **3. Room booking** (T1)
+- `[x]` **2. Backend CRUD** (T1)
+  - Objective: Implement CRUD operations for all entities.
+  - Dependencies: Task 1
+  - Completion: Zod validation and Supabase service queries created.Endpoints exist and persist data successfully.
+- `[x]` **3. Room booking** (T1)
   - Objective: Implement overlap-safe room booking.
-  - Dependencies: T2
-  - Completion: Overlapping bookings are rejected, valid bookings persist.
-- `[ ]` **4. Event registration** (T1)
+  - Dependencies: Task 2
+  - Completion: 14/14 live Supabase tests passed. Overlap rule (new_start < existing_end AND new_end > existing_start) enforced. Back-to-back bookings correctly allowed. Capacity and equipment filtering verified.
+- `[x]` **4. Event registration** (T1)
   - Objective: Implement safe event registration.
-  - Dependencies: T2
-  - Completion: Capacity checks work, duplicates prevented.
+  - Dependencies: Task 2
+  - Completion: 12/12 live Supabase tests passed. Capacity checks, duplicate prevention (student_id), count/status consistency all verified.
 
 ### Phase 2 — AI Agent
 - `[ ]` **5. AI agent foundation** (T2)
@@ -153,12 +153,12 @@ The repository holds the official problem statement, seed data schemas, architec
 ## 5. Team Progress
 
 ### Teammate 1 — Backend + Database
-- `[ ]` Supabase
-- `[ ]` Schema
-- `[ ]` Migrations
-- `[ ]` Seed data
-- `[ ]` Backend services
-- `[ ]` CRUD
+- `[x]` Supabase
+- `[x]` Schema
+- `[x]` Migrations
+- `[x]` Seed data
+- `[x]` Backend services
+- `[x]` CRUD
 - `[ ]` Booking logic
 - `[ ]` Registration logic
 - `[ ]` Testing

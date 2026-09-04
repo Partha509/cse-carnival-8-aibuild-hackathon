@@ -28,11 +28,11 @@ The complete feature set is organized into the following areas:
 ## 2. Campus Data Management
 CampusOS requires a robust backend capable of comprehensive CRUD (Create, Read, Update, Delete) operations across five core systems, ensuring data persists in Supabase PostgreSQL.
 
-- `[ ]` **Schedules CRUD:** Full management of class schedules.
-- `[ ]` **Rooms CRUD:** Full management of campus rooms and facilities.
-- `[ ]` **Events CRUD:** Full management of campus events.
-- `[ ]` **Announcements CRUD:** Full management of notices.
-- `[ ]` **Assignments CRUD:** Full management of deadlines and tasks.
+- `[x]` **Schedules CRUD:** Full management of class schedules.
+- `[x]` **Rooms CRUD:** Full management of campus rooms and facilities.
+- `[x]` **Events CRUD:** Full management of campus events.
+- `[x]` **Announcements CRUD:** Full management of notices.
+- `[x]` **Assignments CRUD:** Full management of deadlines and tasks.
 
 *User Value:* Ensures university staff or administrators can effortlessly keep campus data accurate and up-to-date in real time.
 
@@ -51,18 +51,28 @@ CampusOS requires a robust backend capable of comprehensive CRUD (Create, Read, 
 ## 5. Room Booking
 Room booking requires strict backend validation to prevent overlapping schedules.
 
-- `[ ]` **Availability Search:** Search for free rooms.
-- `[ ]` **Capacity Filtering:** Find rooms large enough for a specific group.
-- `[ ]` **Equipment Filtering:** Ensure the room has required equipment (e.g., projectors).
-- `[ ]` **Date/Time Filtering:** Ensure the room is available during the requested block.
-- `[ ]` **Booking Creation:** Persist the booking to the database.
-- `[ ]` **Backend Confirmation:** Ensure the booking is successfully written before confirming to the user.
+- `[x]` **Availability Search:** Search for free rooms by date/time window.
+- `[x]` **Capacity Filtering:** Find rooms large enough for a specific group.
+- `[x]` **Equipment Filtering:** Ensure the room has required equipment (e.g., projectors).
+- `[x]` **Date/Time Filtering:** Ensure the room is available during the requested block.
+- `[x]` **Booking Creation:** Persist the booking to the database.
+- `[x]` **Overlap Prevention:** Reject conflicting bookings using rule: `new_start < existing_end AND new_end > existing_start`.
+- `[x]` **Back-to-back Allowed:** Consecutive bookings (13:00–15:00, 15:00–17:00) are correctly permitted.
+- `[x]` **Backend Confirmation:** Booking is confirmed only after successful database write.
 
 **Overlap Rule:**
 A booking must be rejected if an overlap exists:
 `new_start < existing_end AND new_end > existing_start`
 
-## 6. Event Features
+## 6. Event Registration (Backend)
+- `[x]` **Register for Event:** Create registration after validating event status, capacity, and duplicate check.
+- `[x]` **Capacity Enforcement:** Reject registration when `registered >= capacity`.
+- `[x]` **Duplicate Prevention:** Prevent same student_id from registering for the same event twice.
+- `[x]` **Cancel Registration:** Remove registration and decrement `registered` count.
+- `[x]` **Status Synchronization:** Event `status` auto-updates to `full` when capacity is reached; reverts to `upcoming` when a spot opens.
+- `[x]` **Count Consistency:** `registered` count always reflects actual registrations in the database.
+
+## 7. Event Features (Frontend — Not Started)
 - `[ ]` **Event Listing:** Browse upcoming, ongoing, and completed events.
 - `[ ]` **Event Details:** View comprehensive details including venue, organizer, and capacity.
 - `[ ]` **Date Filtering:** Find events on a specific day or week.
