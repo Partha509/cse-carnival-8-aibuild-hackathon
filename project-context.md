@@ -90,10 +90,10 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 11: Schedule UI | Frontend| T3 | COMPLETED |
 | Task 12: Rooms UI | Frontend| T3 | COMPLETED |
 | Task 13: Events UI | Frontend| T3 | COMPLETED |
-| Task 14: Announcements UI | Frontend| T3 | NOT STARTED |
-| Task 15: Assignments UI | Frontend| T3 | NOT STARTED |
+| Task 14: Announcements UI | Frontend| T3 | COMPLETED |
+| Task 15: Assignments UI | Frontend| T3 | COMPLETED |
 | Task 16: AI Agent UI | Frontend| T3 | NOT STARTED |
-| Task 17: Frontend ↔ Backend Integration | Integration | ALL | NOT STARTED |
+| Task 17: Frontend ↔ Backend Integration | Integration | ALL | COMPLETED |
 | Task 18: AI ↔ Backend Integration | Integration | T1+T2 | NOT STARTED |
 | Task 19: Full End-to-End Integration | Integration | ALL | NOT STARTED |
 | Task 20: Backend Testing | Testing | T1 | NOT STARTED |
@@ -123,7 +123,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Event Registration Service (`src/services/event_registrations.ts`)**: `registerForEvent`, `cancelRegistration`, `getRegistrationsByEvent`, `getRegistrationStatus`. Capacity enforcement, duplicate prevention (by `student_id`), and `registered` count kept consistent on every mutation.
 - **Validation scripts**: `npm run verify` — 26/26 tests passed against live Supabase.
 - **Frontend expectation (Task 17):** the dashboard data layer (`src/lib/data/dashboard.ts`) fetches `GET /api/dashboard` returning `{ schedules, rooms, events, announcements, assignments }`; until that route exists a 404 surfaces as an empty state.
-- **HTTP API routes (implemented):** `GET/POST /api/schedules` and `PATCH/DELETE /api/schedules/[id]` (Task 11); `GET/POST /api/rooms`, `PATCH/DELETE /api/rooms/[id]`, `GET /api/rooms/[id]/bookings`, `GET/POST /api/bookings`, `DELETE /api/bookings/[id]` (Task 12); `GET/POST /api/events`, `PATCH/DELETE /api/events/[id]`, `GET/POST /api/events/[id]/registrations`, `DELETE /api/events/[id]/registrations/[studentId]` (Task 13) — thin handlers over the service layer, returning `{ data }` or `{ error }` with appropriate status codes. Booking conflicts and registration rules are enforced by the backend services, not the frontend. Remaining entity routes (announcements, assignments) pending with their UIs.
+- **HTTP API routes (implemented):** `GET/POST /api/schedules` and `PATCH/DELETE /api/schedules/[id]` (Task 11); `GET/POST /api/rooms`, `PATCH/DELETE /api/rooms/[id]`, `GET /api/rooms/[id]/bookings`, `GET/POST /api/bookings`, `DELETE /api/bookings/[id]` (Task 12); `GET/POST /api/events`, `PATCH/DELETE /api/events/[id]`, `GET/POST /api/events/[id]/registrations`, `DELETE /api/events/[id]/registrations/[studentId]` (Task 13); `GET/POST /api/announcements`, `PATCH/DELETE /api/announcements/[id]` (Task 17); `GET/POST /api/assignments`, `PATCH/DELETE /api/assignments/[id]` (Task 17); `GET /api/dashboard` (Task 17) — aggregates schedules + rooms (with bookings) + events + announcements + assignments in a single parallel fetch.
 
 ## 9. AI Tool Contract
 
@@ -179,7 +179,10 @@ All tool implementations live in `src/lib/ai/tools/`. Read tools call the backen
 - **Schedule UI (Task 11):** `/schedule` full CRUD wired to live Supabase via `/api/schedules` routes. Data layer `src/lib/data/schedules.ts`; components in `src/components/schedule/` (content/list+filters, form dialog with validation, delete confirmation, feedback toaster). Desktop table + mobile card list, day/course filters, readable 12h times, loading/empty/error/success states.
 - **Rooms UI (Task 12):** `/rooms` full room CRUD + booking interface wired to live Supabase via `/api/rooms` and `/api/bookings` routes. Data layer `src/lib/data/rooms.ts`; components in `src/components/rooms/` (card grid + filters, room form, delete confirm, book dialog, details dialog with per-room bookings + cancel, status badge). Shared `src/components/feedback-toaster.tsx`. Booking conflict validation is backend-only.
 - **Events UI (Task 13):** `/events` full event CRUD + registration interface wired to live Supabase via `/api/events` routes. Data layer `src/lib/data/events.ts`; components in `src/components/events/` (card grid + status filter, event form, delete confirm, register dialog, details dialog with registrations + cancel, status badge). Registration rules (full/cancelled/completed/duplicate) are backend-only; Register disabled in UI for full/cancelled/completed.
-- **Pending:** Tasks 14–16 (announcements, assignments UIs, AI chat interface) and Task 17 (wire the dashboard to the real backend API).
+- **Announcements UI (Task 17):** `/announcements` full CRUD wired to live Supabase via `/api/announcements` routes. Data layer `src/lib/data/announcements.ts`; components in `src/components/announcements/` (priority-sorted card list with expire fade, search + priority filter, form dialog with validation, delete confirmation, toast feedback). High=red border, medium=amber, low=muted. Expired announcements shown with reduced opacity.
+- **Assignments UI (Task 17):** `/assignments` full CRUD wired to live Supabase via `/api/assignments` routes. Data layer `src/lib/data/assignments.ts`; components in `src/components/assignments/` (deadline-sorted table + mobile cards, status filter + course search, deadline proximity badges, status color badges, form dialog with validation including deadline≥assigned date, delete confirmation, toast feedback).
+- **Dashboard (now connected):** `/api/dashboard` route implemented — aggregates all 5 entities in parallel (schedules, rooms+bookings, events, announcements, assignments). Dashboard data layer (`src/lib/data/dashboard.ts`) now receives live data instead of 404/BackendNotReadyError.
+- **Pending:** Task 16 (AI chat interface).
 
 ## 10a. Environment Variables (AI)
 See `.env.example`. All server-only.
