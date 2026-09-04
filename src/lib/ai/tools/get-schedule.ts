@@ -6,7 +6,7 @@ import { fromService, WEEKDAYS } from "./service";
 const schema = z.object({
   day: z
     .enum(WEEKDAYS)
-    .optional()
+    .nullish()
     .describe("Day of the week to filter by. Omit to return the full weekly schedule."),
 });
 

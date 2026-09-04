@@ -6,14 +6,14 @@ import { getAssignmentsTool } from "./get-assignments";
 import { getAnnouncementsTool } from "./get-announcements";
 import { getEventsTool } from "./get-events";
 import { checkRoomAvailabilityTool } from "./check-room-availability";
+import { bookRoomTool } from "./book-room";
+import { registerForEventTool } from "./register-for-event";
+import { cancelRegistrationTool } from "./cancel-registration";
 
 export type { ToolContext, ToolDefinition, ToolResult } from "./registry";
 export { ToolRegistry, toolOk, toolError } from "./registry";
 
-/**
- * Default registry used by the agent. Task 7 adds the three action tools
- * (book_room, register_for_event, cancel_registration) here.
- */
+/** Default registry used by the agent: the utility clock tool plus all 9 campus tools. */
 export function createDefaultRegistry(): ToolRegistry {
   return new ToolRegistry()
     .register(getCurrentDatetimeTool)
@@ -22,5 +22,8 @@ export function createDefaultRegistry(): ToolRegistry {
     .register(getAssignmentsTool)
     .register(getAnnouncementsTool)
     .register(getEventsTool)
-    .register(checkRoomAvailabilityTool);
+    .register(checkRoomAvailabilityTool)
+    .register(bookRoomTool)
+    .register(registerForEventTool)
+    .register(cancelRegistrationTool);
 }

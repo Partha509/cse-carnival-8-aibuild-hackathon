@@ -6,11 +6,11 @@ import { fromService } from "./service";
 const schema = z.object({
   priority: z
     .enum(["high", "medium", "low"])
-    .optional()
+    .nullish()
     .describe("Filter by priority level."),
   active_only: z
     .boolean()
-    .optional()
+    .nullish()
     .describe("If true, only return announcements that have not expired as of today."),
 });
 

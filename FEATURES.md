@@ -100,6 +100,9 @@ The AI Agent must be implemented using native tool calling, backed by real APIs.
 - `[x]` **get_announcements(priority?, active_only?)**: Read campus notices.
 - `[x]` **get_events(date?, upcoming_only?)**: Check campus events.
 - `[x]` **check_room_availability(date, start_time, end_time, min_capacity?, required_equipment?)**: Verify a room is free and meets requirements.
+- `[x]` **book_room(room_number, date, start_time, end_time, purpose, booked_by)**: Execute a booking (backend enforces overlap rules).
+- `[x]` **register_for_event(event_name_or_id, student_name, student_id)**: Register for an event (backend enforces capacity/duplicate/cancelled).
+- `[x]` **cancel_registration(event_name_or_id, student_id)**: Cancel a registration.
 - `[ ]` **book_room(room_number, date, start_time, end_time, purpose, booked_by)**: Execute a booking.
 - `[ ]` **register_for_event(event_name_or_id, student_name, student_id)**: Execute an event registration.
 - `[ ]` **cancel_registration(event_name_or_id, student_id)**: Cancel an existing registration.

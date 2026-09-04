@@ -7,11 +7,11 @@ const schema = z.object({
   date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD")
-    .optional()
+    .nullish()
     .describe("Filter to events occurring on this date (spans multi-day events)."),
   upcoming_only: z
     .boolean()
-    .optional()
+    .nullish()
     .describe("If true, only return events that are not completed or cancelled and have not already ended."),
 });
 

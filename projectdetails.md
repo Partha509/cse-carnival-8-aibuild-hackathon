@@ -288,5 +288,5 @@ The frontend strictly follows `docs/frontend-uiux.md`.
 *Accurate as of the latest repository inspection.*
 - **Backend/Database:** Implemented (Tasks 1–4) — Supabase configured, schema/migrations, CRUD service layer, room booking (overlap detection) and event registration (capacity + duplicate prevention).
 - **Frontend/UI:** Foundation COMPLETE (Task 9) + Dashboard (Task 10) — Next.js 16 app shell, 7 routes, shadcn/ui components, dashboard widgets. Data CRUD pages (Tasks 11–16) not started.
-- **AI Agent:** Foundation COMPLETE (Task 5) + 6 read tools (Task 6) — `/api/chat`, provider abstraction, native tool-calling loop, system prompt, tests. 6/9 campus tools implemented; action tools pending Task 7.
+- **AI Agent:** Foundation COMPLETE (Task 5) + all 9 campus tools (read tools Task 6, action tools Task 7) — `/api/chat`, provider abstraction, native tool-calling loop, name→id resolution, system prompt, tests. Reasoning/safety hardening is Task 8.
 - **Documentation:** `docs/frontend-uiux.md`, `project-context.md`, `AGENTS.md`, and `claude.md` have been established to govern future development. Seed data and schemas are present in `data/` and `schema/`.

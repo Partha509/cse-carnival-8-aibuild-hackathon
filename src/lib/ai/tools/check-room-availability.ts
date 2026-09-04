@@ -20,11 +20,11 @@ const schema = z.object({
     .number()
     .int()
     .positive()
-    .optional()
+    .nullish()
     .describe("Minimum room capacity required."),
   required_equipment: z
     .array(z.string())
-    .optional()
+    .nullish()
     .describe('Equipment the room must have, e.g. ["projector", "AC"].'),
 });
 
@@ -38,6 +38,15 @@ export const checkRoomAvailabilityTool: ToolDefinition<typeof schema> = {
     if (timeToMinutes(params.start_time) >= timeToMinutes(params.end_time)) {
       return toolError("INVALID_TIME", "start_time must be before end_time");
     }
-    return fromService(await getAvailableRooms(params));
+    // Backend schema treats these as optional (not nullable); drop nulls.
+    return fromService(
+      await getAvailableRooms({
+        date: params.date,
+        start_time: params.start_time,
+        end_time: params.end_time,
+        ...(params.min_capacity != null ? { min_capacity: params.min_capacity } : {}),
+        ...(params.required_equipment != null ? { required_equipment: params.required_equipment } : {}),
+      }),
+    );
   },
 };

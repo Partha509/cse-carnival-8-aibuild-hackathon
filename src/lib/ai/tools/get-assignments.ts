@@ -6,16 +6,16 @@ import { fromService } from "./service";
 const schema = z.object({
   course: z
     .string()
-    .optional()
+    .nullish()
     .describe("Filter by course code or title (case-insensitive substring, e.g. \"CSE 4113\" or \"machine learning\")."),
   status: z
     .enum(["pending", "submitted", "graded", "late"])
-    .optional()
+    .nullish()
     .describe("Filter by assignment status."),
   due_before: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "due_before must be YYYY-MM-DD")
-    .optional()
+    .nullish()
     .describe("Only include assignments due on or before this date (inclusive)."),
 });
 
