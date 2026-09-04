@@ -144,14 +144,21 @@ User
 - **Seed Data:** JSON files in `data/` are seed data **only**. They are not the runtime source of truth.
 
 ## 7. Backend Architecture
-*Planned implementation:*
-- **API/Server Layer:** Next.js Route Handlers or Server Actions to receive requests.
-- **Validation:** Zod schemas to enforce strict data types before touching services.
-- **Services:** Reusable TypeScript functions handling business logic.
-- **Database Access:** Supabase Client.
-- **Error Handling:** Standardized error formats to return safe messages to the UI and AI.
-- **Persistence:** All edits must save permanently to Supabase.
-- **CRUD:** Complete Create, Read, Update, Delete for all 5 systems.
+*Implemented (Tasks 1–4)*
+- **API/Server Layer:** Next.js Route Handlers / Server Actions (frontend). Admin client (`src/lib/supabase/admin.ts`) for scripts.
+- **Validation:** Zod schemas in `src/lib/validations/` enforce strict data types before any service call.
+- **Services:** Reusable async TypeScript functions in `src/services/`. Consistent `{ data, error }` response format.
+- **Database Access:** `src/lib/supabase/server.ts` (Next.js request context) and `src/lib/supabase/admin.ts` (scripts/background).
+- **Error Handling:** Human-readable error messages in the unified response wrapper; no raw DB errors exposed.
+- **Persistence:** All mutations write permanently to Supabase PostgreSQL.
+- **Room Booking Architecture:**
+  - Application-level overlap guard: `new_start < existing_end AND new_end > existing_start`.
+  - Availability check: status=available + capacity threshold + equipment containment + no time overlap.
+  - DB-level `EXCLUDE USING gist` constraint as final safety net.
+- **Event Registration Architecture:**
+  - Pre-insert checks: event existence, status (not cancelled/completed), capacity (`registered < capacity`), duplicate (`UNIQUE(event_id, student_id)`).
+  - Post-insert atomic update: increments `registered` count; sets `status=full` when at capacity.
+  - Cancellation rollback: decrements `registered`; reverts `status` from `full` to `upcoming`.
 
 ## 8. CRUD Requirements
 Full CRUD must be supported in the Dashboard for:

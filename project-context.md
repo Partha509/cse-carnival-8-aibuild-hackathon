@@ -40,6 +40,8 @@ Supabase PostgreSQL (Single Source of Truth)
 - **Project Structure Analysis:** Audited seed data and schemas.
 - **Next.js & Supabase Foundation:** Initialized Next.js, Tailwind, TypeScript, Supabase client/server utilities, database schema, types, and seed scripts.
 - **Backend CRUD Services:** Implemented unified validation (using Zod) and pure async service functions for all core entities (schedules, rooms, events, announcements, assignments).
+- **Room Booking Service:** Full booking lifecycle with mandatory overlap detection, availability search (capacity + equipment filters), and DB-level `EXCLUDE` constraint safety net.
+- **Event Registration Service:** Full registration lifecycle with capacity enforcement, duplicate prevention, and automatic `registered` count + `status` synchronization.
 
 ### In Progress
 - N/A
@@ -65,8 +67,8 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 |------|------|-------|--------|
 | Task 1: Project + Supabase Foundation | Backend | T1 | COMPLETED |
 | Task 2: Backend CRUD | Backend | T1 | COMPLETED |
-| Task 3: Room Booking | Backend | T1 | NOT STARTED |
-| Task 4: Event Registration | Backend | T1 | NOT STARTED |
+| Task 3: Room Booking | Backend | T1 | COMPLETED |
+| Task 4: Event Registration | Backend | T1 | COMPLETED |
 | Task 5: AI Agent Foundation | AI | T2 | NOT STARTED |
 | Task 6: AI Read Tools | AI | T2 | NOT STARTED |
 | Task 7: AI Action Tools | AI | T2 | NOT STARTED |
@@ -104,6 +106,10 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 - **Service Layer (`src/services/`)**: `schedules.ts`, `rooms.ts`, `events.ts`, `announcements.ts`, `assignments.ts`.
 - **Validation**: Strict Zod schemas in `src/lib/validations/`.
 - **Response Format**: `Promise<{ data: T | null, error: string | null }>`
+- **Room Booking Service (`src/services/room_bookings.ts`)**: `createBooking`, `cancelBooking`, `getBookings`, `getBookingsByRoom`, `checkRoomAvailability`, `getAvailableRooms`. Overlap rule enforced at application and DB constraint level.
+- **Availability Logic**: Filters by `status=available`, optional `min_capacity`, optional `required_equipment[]`, and no overlapping booking for the requested time slot.
+- **Event Registration Service (`src/services/event_registrations.ts`)**: `registerForEvent`, `cancelRegistration`, `getRegistrationsByEvent`, `getRegistrationStatus`. Capacity enforcement, duplicate prevention (by `student_id`), and `registered` count kept consistent on every mutation.
+- **Validation scripts**: `npm run verify` — 26/26 tests passed against live Supabase.
 
 ## 9. AI Tool Contract
 | Tool | Owner | Status | Backend Dependency |

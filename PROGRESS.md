@@ -30,14 +30,14 @@ The repository currently holds the official problem statement, seed data schemas
   - Objective: Implement CRUD operations for all entities.
   - Dependencies: Task 1
   - Completion: Zod validation and Supabase service queries created.Endpoints exist and persist data successfully.
-- `[ ]` **3. Room booking** (T1)
+- `[x]` **3. Room booking** (T1)
   - Objective: Implement overlap-safe room booking.
-  - Dependencies: T2
-  - Completion: Overlapping bookings are rejected, valid bookings persist.
-- `[ ]` **4. Event registration** (T1)
+  - Dependencies: Task 2
+  - Completion: 14/14 live Supabase tests passed. Overlap rule (new_start < existing_end AND new_end > existing_start) enforced. Back-to-back bookings correctly allowed. Capacity and equipment filtering verified.
+- `[x]` **4. Event registration** (T1)
   - Objective: Implement safe event registration.
-  - Dependencies: T2
-  - Completion: Capacity checks work, duplicates prevented.
+  - Dependencies: Task 2
+  - Completion: 12/12 live Supabase tests passed. Capacity checks, duplicate prevention (student_id), count/status consistency all verified.
 
 ### Phase 2 — AI Agent
 - `[ ]` **5. AI agent foundation** (T2)
