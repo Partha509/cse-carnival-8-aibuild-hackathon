@@ -8,8 +8,8 @@
 - `[!]` Blocked
 
 ## 2. Project Status
-**Overall State:** Initialization Phase. 
-The repository currently holds the official problem statement, seed data schemas, and the foundational architecture documentation (`AGENTS.md`, `claude.md`, `FEATURES.md`, `project-context.md`, `projectdetails.md`, `docs/frontend-uiux.md`). No code frameworks have been installed or initialized yet.
+**Overall State:** Foundation Phase.
+The repository holds the official problem statement, seed data schemas, architecture documentation, and the initialized Next.js frontend foundation (Task 9). Backend, AI agent, and data-driven UI work has not started yet.
 
 ## 3. Completed Work
 - `[x]` Project structure and schema analysis.
@@ -18,6 +18,7 @@ The repository currently holds the official problem statement, seed data schemas
 - `[x]` `AGENTS.md` and `claude.md` created (AI agent development rules and workflows).
 - `[x]` `projectdetails.md` created (Technical architecture).
 - `[x]` `FEATURES.md` created (Authoritative feature inventory).
+- `[x]` Task 9 — Frontend foundation: Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui initialized at repo root; design tokens, app shell (sidebar + mobile drawer), 7 routes with empty states, reusable UI components (Button, Card, Badge, Input, Select, Dialog, Table, Skeleton, EmptyState, ErrorState). Verified with production build and manual route/responsiveness testing.
 
 ## 4. 29-Task Roadmap
 
@@ -58,7 +59,7 @@ The repository currently holds the official problem statement, seed data schemas
   - Completion: Vague requests trigger clarification, unauthorized actions are refused.
 
 ### Phase 3 — Frontend
-- `[ ]` **9. Frontend foundation** (T3)
+- `[x]` **9. Frontend foundation** (T3)
   - Objective: Initialize Next.js, Tailwind, and shadcn/ui.
   - Dependencies: None
   - Completion: App runs, layout shell and navigation exist.

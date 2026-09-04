@@ -115,7 +115,7 @@ The AI Agent must be implemented using native tool calling, backed by real APIs.
 
 ## 12. Frontend Features
 - `[ ]` **Dashboard:** Central command center summarizing today's campus state.
-- `[ ]` **Navigation:** Intuitive sidebar or bottom-bar routing.
+- `[x]` **Navigation:** Intuitive sidebar or bottom-bar routing.
 - `[ ]` **Schedule UI:** Timetable or list view for classes.
 - `[ ]` **Room UI:** Directory and availability tracking.
 - `[ ]` **Events UI:** Discovery and registration views.
@@ -139,7 +139,7 @@ Refer to `project-context.md` for the official 29-task roadmap. High-level seque
 6. Finalization & Deployment (Tasks 27-29)
 
 ## 15. Current Status
-**NOT STARTED.** The repository currently holds only the documentation foundation, schemas, and JSON seed data. No code frameworks have been initialized.
+**FRONTEND FOUNDATION COMPLETE (Task 9).** Next.js 16 + TypeScript + Tailwind v4 + shadcn/ui are initialized with the design system, app shell, navigation, all 7 routes (placeholder empty states), and reusable UI components. Backend, AI agent, and data-driven UIs are not started.
 
 ## 16. Hackathon Demo Priorities
 During judging, prioritize:

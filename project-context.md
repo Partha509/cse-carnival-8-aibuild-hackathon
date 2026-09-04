@@ -38,6 +38,7 @@ Supabase PostgreSQL (Single Source of Truth)
 ### Completed
 - **Frontend Design System Guidelines:** Created `docs/frontend-uiux.md` outlining typography, colors, layout, and UI state conventions.
 - **Project Structure Analysis:** Audited seed data and schemas.
+- **Task 9 — Frontend Foundation:** Initialized Next.js 16 (App Router, TypeScript, Tailwind CSS v4) at the repository root with shadcn/ui (radix-nova style). Implemented design tokens from `docs/frontend-uiux.md` in `src/app/globals.css` (brand, surface, status, AI, and domain colors with light/dark values), Inter typography, responsive app shell (`src/components/layout/`: sticky desktop sidebar ≥lg, mobile header + sheet drawer <lg), all 7 routes (`/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai` — `/` redirects to `/dashboard`), shared `PageHeader`/`EmptyState`/`ErrorState` components, `error.tsx` + `not-found.tsx` boundaries, and shadcn/ui primitives (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label). Pages show honest empty states — no fake data, no backend logic, no AI logic.
 
 ### In Progress
 - N/A
@@ -54,7 +55,8 @@ Supabase PostgreSQL (Single Source of Truth)
 - AI uses native tool calling.
 - Backend services are shared by dashboard and AI.
 - Frontend follows `docs/frontend-uiux.md`.
-- No actual framework initialized yet.
+- Next.js app lives at the repository root (single app for frontend, backend API/server actions, and AI agent).
+- shadcn/ui initialized with the radix-nova style; components live in `src/components/ui/`.
 
 ## 6. Task Status System
 Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, NEEDS FIX.
@@ -69,7 +71,7 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | Task 6: AI Read Tools | AI | T2 | NOT STARTED |
 | Task 7: AI Action Tools | AI | T2 | NOT STARTED |
 | Task 8: AI Reasoning & Safety | AI | T2 | NOT STARTED |
-| Task 9: Frontend Foundation | Frontend| T3 | NOT STARTED |
+| Task 9: Frontend Foundation | Frontend| T3 | COMPLETED |
 | Task 10: Dashboard | Frontend| T3 | NOT STARTED |
 | Task 11: Schedule UI | Frontend| T3 | NOT STARTED |
 | Task 12: Rooms UI | Frontend| T3 | NOT STARTED |
@@ -114,8 +116,12 @@ Statuses: NOT STARTED, IN PROGRESS, BLOCKED, READY FOR INTEGRATION, COMPLETED, N
 | cancel_registration | T2 | NOT STARTED | event registration |
 
 ## 10. Frontend Status
-*Pending Implementation (Tasks 9-16)*
-- **Routes:** `/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai` (To be created)
+- **Framework:** Next.js 16 (App Router, TypeScript, Tailwind CSS v4, shadcn/ui) initialized at repo root. `npm run dev` starts the app.
+- **Routes (created, placeholder empty states pending data integration):** `/` (redirects to `/dashboard`), `/dashboard`, `/schedule`, `/rooms`, `/events`, `/announcements`, `/assignments`, `/ai`.
+- **Shell:** `src/components/layout/` — `AppShell`, `AppSidebar` (desktop ≥lg), `AppHeader` + sheet drawer (mobile), `SidebarNav` with active-route highlighting.
+- **Shared components:** `src/components/` — `PageHeader`, `EmptyState`, `ErrorState`; shadcn/ui primitives in `src/components/ui/` (button, card, badge, input, select, dialog, table, skeleton, sheet, separator, label).
+- **Design tokens:** `src/app/globals.css` per `docs/frontend-uiux.md` (light + dark values; Tailwind utilities like `text-ai-accent`, `bg-danger/10`, `text-schedule` available).
+- **Pending:** Tasks 10–16 (dashboard widgets with real data, per-system CRUD UIs, AI chat interface).
 
 ## 11. Git / Collaboration Rules
 - `git pull origin main` before starting work.
