@@ -1,7 +1,20 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { AppHeader } from "./app-header";
 import { AppSidebar } from "./app-sidebar";
 
+// Auth routes render standalone (no sidebar/header chrome).
+const BARE_PREFIXES = ["/login", "/signup"];
+
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isBare = BARE_PREFIXES.some((p) => pathname.startsWith(p));
+
+  if (isBare) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />

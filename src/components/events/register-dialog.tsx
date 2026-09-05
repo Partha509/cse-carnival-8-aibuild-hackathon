@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
 import type { Event } from "@/types/database";
 
 export type RegistrationFormValues = { student_id: string; name: string };
@@ -39,15 +40,22 @@ export function RegisterDialog({
 
   React.useEffect(() => {
     if (!open) return;
-    setValues({ student_id: "", name: "" });
-    setErrors({});
-    setFormError(null);
+    let active = true;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!active) return;
+      const m = (user?.user_metadata ?? {}) as {
+        name?: string;
+        student_id?: string;
+      };
+      setErrors({});
+      setFormError(null);
+      setValues({ student_id: m.student_id ?? "", name: m.name ?? "" });
+    });
+    return () => {
+      active = false;
+    };
   }, [open]);
-
-  function setField(key: keyof RegistrationFormValues, value: string) {
-    setValues((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: undefined }));
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -97,10 +105,9 @@ export function RegisterDialog({
             <Label className="text-sm">Student ID</Label>
             <Input
               value={values.student_id}
-              onChange={(e) => setField("student_id", e.target.value)}
-              placeholder="e.g. 20-40532"
+              readOnly
+              className="bg-muted text-muted-foreground"
               aria-invalid={!!errors.student_id}
-              autoFocus
             />
             {errors.student_id ? (
               <p className="text-xs text-danger">{errors.student_id}</p>
@@ -110,14 +117,18 @@ export function RegisterDialog({
             <Label className="text-sm">Full name</Label>
             <Input
               value={values.name}
-              onChange={(e) => setField("name", e.target.value)}
-              placeholder="e.g. Sakibul Hassan"
+              readOnly
+              className="bg-muted text-muted-foreground"
               aria-invalid={!!errors.name}
             />
             {errors.name ? (
               <p className="text-xs text-danger">{errors.name}</p>
             ) : null}
           </div>
+
+          <p className="text-xs text-text-subtle">
+            Registering as the signed-in student.
+          </p>
 
           {formError ? (
             <p className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">
