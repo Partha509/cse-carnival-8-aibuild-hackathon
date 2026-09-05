@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toIsoDate } from "@/lib/datetime";
+import { createClient } from "@/lib/supabase/client";
 import type { Room } from "@/types/database";
 
 export type BookingFormValues = {
@@ -51,15 +52,24 @@ export function BookRoomDialog({
 
   React.useEffect(() => {
     if (!open) return;
-    setErrors({});
-    setFormError(null);
-    setValues({
-      date: toIsoDate(),
-      start_time: "",
-      end_time: "",
-      purpose: "",
-      booked_by: "",
+    let active = true;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!active) return;
+      const m = (user?.user_metadata ?? {}) as { name?: string };
+      setErrors({});
+      setFormError(null);
+      setValues({
+        date: toIsoDate(),
+        start_time: "",
+        end_time: "",
+        purpose: "",
+        booked_by: m.name ?? "",
+      });
     });
+    return () => {
+      active = false;
+    };
   }, [open]);
 
   function setField(key: keyof BookingFormValues, value: string) {
@@ -165,8 +175,8 @@ export function BookRoomDialog({
           <Field label="Booked by" error={errors.booked_by}>
             <Input
               value={values.booked_by}
-              onChange={(e) => setField("booked_by", e.target.value)}
-              placeholder="Your name or organization"
+              readOnly
+              className="bg-muted text-muted-foreground"
               aria-invalid={!!errors.booked_by}
             />
           </Field>

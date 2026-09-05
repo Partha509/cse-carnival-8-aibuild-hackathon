@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { runAgent } from "@/lib/ai/agent";
 import { AgentError, toSafeMessage } from "@/lib/ai/errors";
+import { getSessionUser } from "@/lib/auth";
 import type { ChatErrorResponse, ChatResponse } from "@/types/ai";
 
 export const runtime = "nodejs";
@@ -54,7 +55,13 @@ export async function POST(req: Request) {
   }
 
   try {
-    const result = await runAgent({ messages: parsed.data.messages, user: parsed.data.user });
+    // Session identity is authoritative — never trust client-supplied user info.
+    const sessionUser = await getSessionUser();
+    const user =
+      sessionUser && sessionUser.student_id && sessionUser.name
+        ? { student_id: sessionUser.student_id, name: sessionUser.name }
+        : parsed.data.user;
+    const result = await runAgent({ messages: parsed.data.messages, user });
     return NextResponse.json<ChatResponse>(result);
   } catch (err) {
     // Full detail stays server-side; the client only sees a sanitized message.

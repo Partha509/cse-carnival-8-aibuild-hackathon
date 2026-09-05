@@ -12,6 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { SidebarNav } from "./sidebar-nav";
+import { UserMenu } from "./user-menu";
 
 export function AppHeader() {
   const [open, setOpen] = React.useState(false);
@@ -49,7 +50,7 @@ export function AppHeader() {
         <span className="font-bold tracking-tight">CampusOS</span>
       </Link>
 
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-1">
         <Button
           asChild
           variant="ghost"
@@ -60,6 +61,7 @@ export function AppHeader() {
             <Bot className="size-5" aria-hidden="true" />
           </Link>
         </Button>
+        <UserMenu compact />
       </div>
     </header>
   );

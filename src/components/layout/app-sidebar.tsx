@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import { SidebarNav } from "./sidebar-nav";
+import { UserMenu } from "./user-menu";
 
 export function AppSidebar() {
   return (
@@ -22,9 +23,7 @@ export function AppSidebar() {
         <SidebarNav />
       </div>
       <div className="border-t border-sidebar-border p-4">
-        <p className="text-xs text-text-subtle">
-          CampusOS — your campus, one place.
-        </p>
+        <UserMenu />
       </div>
     </aside>
   );
